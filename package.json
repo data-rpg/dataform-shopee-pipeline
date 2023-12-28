@@ -1,0 +1,6 @@
+{
+  "name": "rpg-shopee-pipeline",
+  "dependencies": {
+    "@dataform/core": "2.4.2"
+  }
+}
