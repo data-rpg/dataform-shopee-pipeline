@@ -1,0 +1,4 @@
+SELECT  
+    ${date_utc_to_local("create_time")}
+from
+    ${ref("shopee_order_details_blmy")}
