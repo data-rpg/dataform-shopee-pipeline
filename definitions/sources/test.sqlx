@@ -1,4 +1,8 @@
-SELECT  
-    ${date_utc_to_local("create_time")}
-from
-    ${ref("shopee_order_details_blmy")}
+import { convert_to_local }
+FROM
+  'definitions/sources/date_mapping.js';
+SELECT
+  *,
+  ${convert_to_local("create_time")} AS country_group
+FROM
+  ${ref("shopee_order_details_blmy")};
