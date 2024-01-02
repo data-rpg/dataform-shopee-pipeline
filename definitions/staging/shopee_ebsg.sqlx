@@ -1,0 +1,8 @@
+config {type: "table"}
+
+SELECT
+    'EB' as main_brand, 
+    'EBSG-Shopee' as brand,
+    *
+FROM
+  ${ref("shopee_order_details_ebsg")}

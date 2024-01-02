@@ -1,0 +1,34 @@
+config {type: "table"}
+
+SELECT
+    * ,
+    ${mapping.convert_to_local('create_time')} AS created_dt,
+    ${mapping.convert_to_local('update_time')} AS updated_dt,
+    ${mapping.convert_to_local('ship_by_date')} AS ship_by_dt,
+    ${mapping.convert_to_local('pay_time')} AS pay_dt,
+    ${mapping.order_count('buyer_user_id','create_time')} AS order_count,
+FROM
+  (
+    select * from ${ref("shopee_blmy")}
+    union all
+    select * from ${ref("shopee_blsg")}
+    union all
+    select * from ${ref("shopee_ccmy")}
+    union all
+    select * from ${ref("shopee_ccsg")}
+    union all
+    select * from ${ref("shopee_crmy")}
+    union all
+    select * from ${ref("shopee_ebsg")}
+    union all
+    select * from ${ref("shopee_mtmy")}
+    union all
+    select * from ${ref("shopee_mtsg")}
+    union all
+    select * from ${ref("shopee_pamy")}
+    union all
+    select * from ${ref("shopee_tmmy")}
+    union all
+    select * from ${ref("shopee_tmsg")}
+  )
+  
