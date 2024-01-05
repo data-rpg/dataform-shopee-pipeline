@@ -8,5 +8,28 @@ function order_count(user, date){
     `;
 }
 
-module.exports = { convert_to_local, order_count };
+function string_array_to_json(stringified_array){ /* [{'A': 1, 'B': "Funfetti Knight's Tumbler", 'C': True}, {'A': 2, 'B': "Disney Ace Bottle Medium", 'C': False}] 
+                                                     ==> [{"A": 1, "B": "Funfetti Knight's Tumbler", "C": true}, {"A": 2, "B": "Disney Ace Bottle Medium", "C": false}] */
+    return `    
+    PARSE_JSON(
+    replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(${stringified_array}      
+                                                                                                                , '"', "'")                                                                                                                                                      
+                                                                                                                , "{'", '{"')
+                                                                                                                , "':", '":')
+                                                                                                                , ", '", ', "')
+                                                                                                                , ": '", ': "')
+                                                                                                                , "', ", '", ')
+                                                                                                                , "'}", '"}')
+                                                                                                                , ": [", ': "[')
+                                                                                                                , "],", ']",')
+                                                                                                                , "True", "true")
+                                                                                                                , "False", "false")
+                                                                                                                , "None", "null") 
+               )                                                                                                                                                          
+    `;
+}
+
+
+
+module.exports = { convert_to_local, order_count, string_array_to_json };
 

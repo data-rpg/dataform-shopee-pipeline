@@ -1,0 +1,40 @@
+config {type: "table"}
+
+select  
+  a.* except(actual_shipping_fee, actual_shipping_fee_confirmed,order_chargeable_weight_gram, reverse_shipping_fee, total_amount, order_count),
+  b as item_list_json,
+  JSON_EXTRACT_SCALAR(b, '$.item_id') as item_id,
+  JSON_EXTRACT_SCALAR(b, '$.item_name') as item_name,
+  JSON_EXTRACT_SCALAR(b, '$.item_sku') as item_sku,
+  JSON_EXTRACT_SCALAR(b, '$.model_id') as model_id,
+  JSON_EXTRACT_SCALAR(b, '$.model_name') as model_name,
+  JSON_EXTRACT_SCALAR(b, '$.model_sku') as model_sku,
+  JSON_EXTRACT_SCALAR(b, '$.model_quantity_purchased') as model_quantity_purchased,
+  JSON_EXTRACT_SCALAR(b, '$.model_original_price') as model_original_price,
+  JSON_EXTRACT_SCALAR(b, '$.model_discounted_price') as model_discounted_price,
+  JSON_EXTRACT_SCALAR(b, '$.wholesale') as wholesale,
+  JSON_EXTRACT_SCALAR(b, '$.weight') as weight,
+  JSON_EXTRACT_SCALAR(b, '$.add_on_deal') as add_on_deal,
+  JSON_EXTRACT_SCALAR(b, '$.main_item') as main_item,
+  JSON_EXTRACT_SCALAR(b, '$.add_on_deal_id') as add_on_deal_id ,
+  JSON_EXTRACT_SCALAR(b, '$.promotion_type') as promotion_type,
+  JSON_EXTRACT_SCALAR(b, '$.promotion_id') as promotion_id,
+  JSON_EXTRACT_SCALAR(b, '$.order_item_id') as order_item_id,
+  JSON_EXTRACT_SCALAR(b, '$.promotion_group_id') as promotion_group_id,
+  JSON_EXTRACT_SCALAR(b, '$.image_info') as image_info
+FROM
+  ${ref("shopee_orders_union")} a,
+  unnest(json_extract_array(${mapping.string_array_to_json('item_list')})) b
+
+
+
+
+
+
+
+
+
+
+
+
+
