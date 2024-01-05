@@ -1,0 +1,7 @@
+config {type: "table"}
+
+SELECT
+    'BL' as main_brand, 
+    *
+FROM
+  ${ref("shopee_transaction_details_blsg")}

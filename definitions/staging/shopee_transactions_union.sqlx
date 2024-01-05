@@ -1,0 +1,25 @@
+config {type: "table"}
+
+SELECT
+    * 
+FROM
+  (
+    select * from ${ref("shopee_blmy_transaction")}
+    union all
+    select * from ${ref("shopee_blsg_transaction")}
+    union all
+    select * from ${ref("shopee_ccmy_transaction")}
+    union all
+    select * from ${ref("shopee_ccsg_transaction")}
+    union all
+    select * from ${ref("shopee_ebsg_transaction")}
+    union all
+    select * from ${ref("shopee_mtmy_transaction")}
+    union all
+    select * from ${ref("shopee_mtsg_transaction")}
+    union all
+    select * from ${ref("shopee_tmmy_transaction")}
+    union all
+    select * from ${ref("shopee_tmsg_transaction")}
+  )
+  

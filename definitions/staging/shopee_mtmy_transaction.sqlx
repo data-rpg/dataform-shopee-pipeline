@@ -1,0 +1,7 @@
+config {type: "table"}
+
+SELECT
+    'MT' as main_brand, 
+    *
+FROM
+  ${ref("shopee_transaction_details_mtmy")}

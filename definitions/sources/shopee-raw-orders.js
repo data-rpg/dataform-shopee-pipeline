@@ -25,12 +25,6 @@ declare({
 declare({
     database: "rpg-dw",
     schema: "testing",
-    name: "shopee_order_details_crmy",
-});
-
-declare({
-    database: "rpg-dw",
-    schema: "testing",
     name: "shopee_order_details_ebsg",
 });
 
@@ -44,12 +38,6 @@ declare({
     database: "rpg-dw",
     schema: "testing",
     name: "shopee_order_details_mtsg",
-});
-
-declare({
-    database: "rpg-dw",
-    schema: "testing",
-    name: "shopee_order_details_pamy",
 });
 
 declare({
