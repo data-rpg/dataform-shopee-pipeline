@@ -1,0 +1,10 @@
+config {type: "table"}
+
+select  
+  a.*,
+  b.* except(main_brand, order_sn, brand)
+FROM
+  ${ref("shopee_orders_union")} a
+left join
+  ${ref("shopee_transactions_union")} b
+on a.order_sn = b.order_sn and a.brand = b.brand

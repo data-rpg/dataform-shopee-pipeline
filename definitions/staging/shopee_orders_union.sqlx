@@ -9,26 +9,22 @@ SELECT
     ${mapping.order_count('buyer_user_id','create_time')} AS order_count,
 FROM
   (
-    select * from ${ref("shopee_blmy")}
+    select * from ${ref("shopee_blmy_order")}
     union all
-    select * from ${ref("shopee_blsg")}
+    select * from ${ref("shopee_blsg_order")}
     union all
-    select * from ${ref("shopee_ccmy")}
+    select * from ${ref("shopee_ccmy_order")}
     union all
-    select * from ${ref("shopee_ccsg")}
+    select * from ${ref("shopee_ccsg_order")}
     union all
-    select * from ${ref("shopee_crmy")}
+    select * from ${ref("shopee_ebsg_order")}
     union all
-    select * from ${ref("shopee_ebsg")}
+    select * from ${ref("shopee_mtmy_order")}
     union all
-    select * from ${ref("shopee_mtmy")}
+    select * from ${ref("shopee_mtsg_order")}
     union all
-    select * from ${ref("shopee_mtsg")}
+    select * from ${ref("shopee_tmmy_order")}
     union all
-    select * from ${ref("shopee_pamy")}
-    union all
-    select * from ${ref("shopee_tmmy")}
-    union all
-    select * from ${ref("shopee_tmsg")}
+    select * from ${ref("shopee_tmsg_order")}
   )
   
