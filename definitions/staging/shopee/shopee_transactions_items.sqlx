@@ -1,0 +1,34 @@
+config {type: "table"}
+
+select  
+    a.main_brand,
+    a.brand,
+    a.buyer_user_name,
+    a.order_sn,
+    a.return_order_sn_list,
+    b as order_income_items_json,
+    JSON_EXTRACT_SCALAR(b, '$.activity_id') as activity_id,
+    JSON_EXTRACT_SCALAR(b, '$.activity_type') as activity_type,
+    JSON_EXTRACT_SCALAR(b, '$.discount_from_coin') as discount_from_coin,
+    JSON_EXTRACT_SCALAR(b, '$.activitdiscount_from_voucher_sellery_id') as discount_from_voucher_seller,
+    JSON_EXTRACT_SCALAR(b, '$.discount_from_voucher_shopee') as discount_from_voucher_shopee,
+    JSON_EXTRACT_SCALAR(b, '$.discounted_price') as discounted_price,
+    JSON_EXTRACT_SCALAR(b, '$.is_b2c_shop_item') as is_b2c_shop_item,
+    JSON_EXTRACT_SCALAR(b, '$.is_main_item') as is_main_item,
+    JSON_EXTRACT_SCALAR(b, '$.item_id') as item_id,
+    JSON_EXTRACT_SCALAR(b, '$.item_name') as item_name,
+    JSON_EXTRACT_SCALAR(b, '$.item_sku') as item_sku,
+    JSON_EXTRACT_SCALAR(b, '$.model_id') as model_id,
+    JSON_EXTRACT_SCALAR(b, '$.model_name') as model_name,
+    JSON_EXTRACT_SCALAR(b, '$.model_sku') as model_sku,
+    JSON_EXTRACT_SCALAR(b, '$.original_price') as original_price,
+    JSON_EXTRACT_SCALAR(b, '$.quantity_purchased') as quantity_purchased,
+    JSON_EXTRACT_SCALAR(b, '$.seller_discount') as seller_discount,
+    JSON_EXTRACT_SCALAR(b, '$.shopee_discount') as shopee_discount,
+
+FROM
+  ${ref("shopee_transactions_union")} a,
+  unnest(json_extract_array(${mapping.string_array_to_json('order_income_items')})) b
+
+
+  
