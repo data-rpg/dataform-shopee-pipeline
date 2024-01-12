@@ -1,0 +1,10 @@
+config {type: "table"}
+
+select  
+  a.* except(actual_shipping_fee, actual_shipping_fee_confirmed,order_chargeable_weight_gram, reverse_shipping_fee, total_amount, order_count),
+  b.* except(main_brand, brand, order_sn)
+FROM
+  ${ref("shopee_orders_union")} a
+left join 
+  ${ref("shopee_transactions_items")} b
+on a.order_sn = b.order_sn and a.brand = b.brand
