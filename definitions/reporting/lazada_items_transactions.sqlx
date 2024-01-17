@@ -1,0 +1,11 @@
+config {type: "table"}
+
+select 
+    a.*,
+    b.* except (main_brand, brand, order_no, orderItem_no, seller_sku) 
+from 
+    ${ref("lazada_items_union")} a
+left join
+    ${ref("lazada_transactions_pivot_trans")} b
+on a.order_id = b.order_no and a.order_item_id = b.orderItem_no
+

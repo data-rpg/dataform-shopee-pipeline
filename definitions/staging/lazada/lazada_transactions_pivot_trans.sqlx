@@ -1,0 +1,27 @@
+config {type: "table"}
+
+select 
+    * ,
+    (coalesce(orders_sales_item_price_credit, 0) + coalesce(orders_sales_other, 0)) as trans_total_orders_sales,
+    (coalesce(orders_logistics_shipping_fee_paid_by_seller, 0) + coalesce(orders_logistics_shipping_fee__paid_by_customer, 0) + coalesce(orders_logistics_shipping_fee_voucher__by_lazada, 0) + coalesce(orders_logistics_other, 0) + coalesce(orders_logistics_shipping_fee_subsidy__by_seller, 0)) as trans_total_orders_logistics,
+    (coalesce(orders_marketing_fees_promotional_charges_vouchers, 0) + coalesce(orders_marketing_fees_free_shipping_max_fee, 0) + coalesce(orders_marketing_fees_lcp_fee, 0) + coalesce(orders_marketing_fees_promotional_charges_flexi_combo, 0) + coalesce(orders_marketing_fees_lazcoin_discount, 0) + coalesce(orders_marketing_fees_other, 0)) as trans_total_orders_marketing_fee,
+    (coalesce(orders_lazada_fees_payment_fee, 0) + coalesce(orders_lazada_fees_commission, 0) + coalesce(orders_lazada_fees_lazada_bonus, 0) + coalesce(orders_lazada_fees_lazada_bonus___lzd_co_fund, 0) + coalesce(orders_lazada_fees_other, 0)) as trans_total_orders_lazada_fees,
+    (coalesce(other_services_marketing_fees_sponsored_affiliates, 0) + coalesce(other_services_marketing_fees_other, 0)) as trans_total_other_services_marketing_fees,
+    (coalesce(refunds_sales_refund, 0) + coalesce(refunds_logistics_refund, 0) + coalesce(refunds_marketing_fees_refund, 0) + coalesce(refunds_lazada_fees_refund, 0) + coalesce(refunds_claims_refund, 0)) as trans_total_refunds,
+    (
+        (coalesce(orders_sales_item_price_credit, 0) + coalesce(orders_sales_other, 0))
+        +
+        (coalesce(orders_logistics_shipping_fee_paid_by_seller, 0) + coalesce(orders_logistics_shipping_fee__paid_by_customer, 0) + coalesce(orders_logistics_shipping_fee_voucher__by_lazada, 0) + coalesce(orders_logistics_other, 0) + coalesce(orders_logistics_shipping_fee_subsidy__by_seller, 0))
+        +
+        (coalesce(orders_marketing_fees_promotional_charges_vouchers, 0) + coalesce(orders_marketing_fees_free_shipping_max_fee, 0) + coalesce(orders_marketing_fees_lcp_fee, 0) + coalesce(orders_marketing_fees_promotional_charges_flexi_combo, 0) + coalesce(orders_marketing_fees_lazcoin_discount, 0) + coalesce(orders_marketing_fees_other, 0)) 
+        +
+        (coalesce(orders_lazada_fees_payment_fee, 0) + coalesce(orders_lazada_fees_commission, 0) + coalesce(orders_lazada_fees_lazada_bonus, 0) + coalesce(orders_lazada_fees_lazada_bonus___lzd_co_fund, 0) + coalesce(orders_lazada_fees_other, 0)) 
+        +
+        coalesce(orders_claims_other, 0)
+        +
+        (coalesce(other_services_marketing_fees_sponsored_affiliates, 0) + coalesce(other_services_marketing_fees_other, 0)) 
+        +
+        (coalesce(refunds_sales_refund, 0) + coalesce(refunds_logistics_refund, 0) + coalesce(refunds_marketing_fees_refund, 0) + coalesce(refunds_lazada_fees_refund, 0) + coalesce(refunds_claims_refund, 0))
+      ) as trans_transaction_amount
+from 
+    ${ref("lazada_transactions_pivot")}
