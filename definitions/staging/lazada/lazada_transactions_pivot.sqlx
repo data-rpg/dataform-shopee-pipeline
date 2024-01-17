@@ -1,0 +1,26 @@
+config {type: "table"}
+
+select * from
+(
+    select
+        main_brand,
+        brand, 
+        order_no, 
+        orderItem_no,
+        seller_sku,
+        transaction_fee_name, 
+        cast(amount as numeric) as amount
+    from
+        ${ref("lazada_transactions_union")}
+
+)
+
+PIVOT
+(
+    -- aggregate
+    cast(sum(amount) as numeric)
+    -- pivot_column
+    FOR transaction_fee_name in ${mapping.pivot_col_name()}
+)
+
+  

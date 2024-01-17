@@ -1,0 +1,8 @@
+config {type: "table"}
+
+SELECT
+    'MT' as main_brand, 
+    'MTMY-Lazada' as brand,
+    *
+FROM
+  ${ref("lazada_item_details_mtmy")}

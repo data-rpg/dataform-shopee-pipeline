@@ -1,0 +1,29 @@
+config {type: "table"}
+
+SELECT
+    *, 
+    ${mapping.convert_to_local2('created_at')} AS created_at_lcl,
+    ${mapping.convert_to_local2('updated_at')} AS updated_at_lcl,
+    ${mapping.order_count('address_billing_first_name','created_at')} AS order_count,
+    replace(replace(replace(statuses, "'", ""), "[", ""), "]", "") as status,
+FROM
+  (
+    select * from ${ref("lazada_blmy_order")}
+    union all
+    select * from ${ref("lazada_blsg_order")}
+    union all
+    select * from ${ref("lazada_ccmy_order")}
+    union all
+    select * from ${ref("lazada_ccsg_order")}
+    union all
+    select * from ${ref("lazada_ebsg_order")}
+    union all
+    select * from ${ref("lazada_mtmy_order")}
+    union all
+    select * from ${ref("lazada_mtsg_order")}
+    union all
+    select * from ${ref("lazada_tmmy_order")}
+    union all
+    select * from ${ref("lazada_tmsg_order")}
+  )
+  

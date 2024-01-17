@@ -1,0 +1,87 @@
+config {type: "table"}
+
+SELECT    
+    * except(items),
+    items as order_items_json,
+    json_extract_scalar(items, '$.tax_amount') as tax_amount,
+    json_extract_scalar(items, '$.pick_up_store_info') as pick_up_store_info,
+    json_extract_scalar(items, '$.reason') as reason,
+    json_extract_scalar(items, '$.purchase_order_id') as purchase_order_id,
+    json_extract_scalar(items, '$.voucher_seller') as voucher_seller,
+    json_extract_scalar(items, '$.payment_time') as payment_time,
+    json_extract_scalar(items, '$.voucher_code_seller') as voucher_code_seller,
+    json_extract_scalar(items, '$.voucher_code') as voucher_code,
+    json_extract_scalar(items, '$.package_id') as package_id,
+    json_extract_scalar(items, '$.buyer_id') as buyer_id,
+    json_extract_scalar(items, '$.variation') as variation,
+    json_extract_scalar(items, '$.voucher_code_platform') as voucher_code_platform,
+    json_extract_scalar(items, '$.purchase_order_number') as purchase_order_number,
+    json_extract_scalar(items, '$.sku') as sku,
+    json_extract_scalar(items, '$.gift_wrapping') as gift_wrapping,
+    json_extract_scalar(items, '$.invoice_number') as invoice_number,
+    json_extract_scalar(items, '$.order_type') as order_type,
+    json_extract_scalar(items, '$.cancel_return_initiator') as cancel_return_initiator,
+    json_extract_scalar(items, '$.shop_sku') as shop_sku,
+    json_extract_scalar(items, '$.is_reroute') as is_reroute,
+    json_extract_scalar(items, '$.stage_pay_status') as stage_pay_status,
+    json_extract_scalar(items, '$.sku_id') as sku_id,
+    json_extract_scalar(items, '$.tracking_code_pre') as tracking_code_pre,
+    json_extract_scalar(items, '$.order_item_id') as order_item_id,
+    json_extract_scalar(items, '$.shop_id') as shop_id,    
+    json_extract_scalar(items, '$.is_fbl') as is_fbl,
+    json_extract_scalar(items, '$.name') as name,
+    json_extract_scalar(items, '$.delivery_option_sof') as delivery_option_sof,
+    json_extract_scalar(items, '$.fulfillment_sla') as fulfillment_sla,
+    json_extract_scalar(items, '$.status') as status,
+    json_extract_scalar(items, '$.paid_price') as paid_price,
+    json_extract_scalar(items, '$.product_main_image') as product_main_image,
+    json_extract_scalar(items, '$.voucher_platform') as voucher_platform,
+    json_extract_scalar(items, '$.product_detail_url') as asproduct_detail_url,
+    json_extract_scalar(items, '$.promised_shipping_time') as promised_shipping_time,
+    json_extract_scalar(items, '$.warehouse_code') as warehouse_code,
+    json_extract_scalar(items, '$.shipping_type') as shipping_type,
+    ${mapping.convert_to_local2("json_extract_scalar(items, '$.created_at')")} as created_at,
+    json_extract_scalar(items, '$.voucher_seller_lpi') as voucher_seller_lpi,
+    json_extract_scalar(items, '$.shipping_fee_discount_platform') as shipping_fee_discount_platform,
+    json_extract_scalar(items, '$.personalization') as personalization,
+    json_extract_scalar(items, '$.wallet_credits') as wallet_credits,
+    ${mapping.convert_to_local2("json_extract_scalar(items, '$.updated_at')")} as updated_at,
+    json_extract_scalar(items, '$.currency') as currency,
+    json_extract_scalar(items, '$.shipping_provider_type') as shipping_provider_type,
+    json_extract_scalar(items, '$.shipping_fee_original') as shipping_fee_original,
+    json_extract_scalar(items, '$.voucher_platform_lpi') as voucher_platform_lpi,
+    json_extract_scalar(items, '$.is_digital') as is_digital,
+    json_extract_scalar(items, '$.item_price') as item_price,
+    json_extract_scalar(items, '$.shipping_service_cost') as shipping_service_cost,
+    json_extract_scalar(items, '$.tracking_code') as tracking_code,
+    json_extract_scalar(items, '$.shipping_fee_discount_seller') as shipping_fee_discount_seller,
+    json_extract_scalar(items, '$.shipping_amount') as shipping_amount,
+    json_extract_scalar(items, '$.reason_detail') as reason_detail,
+    json_extract_scalar(items, '$.return_status') as return_status,
+    json_extract_scalar(items, '$.shipment_provider') as shipment_provider,
+    json_extract_scalar(items, '$.priority_fulfillment_tag') as priority_fulfillment_tag,
+    json_extract_scalar(items, '$.voucher_amount') as voucher_amount,
+    json_extract_scalar(items, '$.digital_delivery_info') as digital_delivery_info,
+    json_extract_scalar(items, '$.extra_attributes') as extra_attributes
+FROM
+  (
+    select * from ${ref("lazada_blmy_item")}
+    union all
+    select * from ${ref("lazada_blsg_item")}
+    union all
+    select * from ${ref("lazada_ccmy_item")}
+    union all
+    select * from ${ref("lazada_ccsg_item")}
+    union all
+    select * from ${ref("lazada_ebsg_item")}
+    union all
+    select * from ${ref("lazada_mtmy_item")}
+    union all
+    select * from ${ref("lazada_mtsg_item")}
+    union all
+    select * from ${ref("lazada_tmmy_item")}
+    union all
+    select * from ${ref("lazada_tmsg_item")}
+  ), 
+  UNNEST(JSON_EXTRACT_ARRAY(order_items)) items 
+  

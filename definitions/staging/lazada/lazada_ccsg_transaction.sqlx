@@ -1,0 +1,30 @@
+config {type: "table"}
+
+SELECT
+    'CC' as main_brand, 
+    'CCSG-Lazada' as brand,
+    order_no,
+    transaction_date,
+    amount,
+    paid_status,
+    shipping_provider,
+    WHT_included_in_amount,
+    payment_ref_id,
+    lazada_sku,
+    fee_type,
+    transaction_type,
+    orderItem_no,
+    orderItem_status,
+    reference,
+    fee_name,
+    shipping_speed,
+    WHT_amount,
+    transaction_number,
+    seller_sku,
+    statement,
+    details,
+    VAT_in_amount,
+    shipment_type,
+    comment
+FROM
+  ${ref("lazada_transaction_details_ccsg")}
