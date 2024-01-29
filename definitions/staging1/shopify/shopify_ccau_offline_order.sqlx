@@ -1,0 +1,23 @@
+config {type: "table"}
+
+SELECT 
+    'CC' as main_brand, 
+    'CCAU' as brand,
+    'AU' as region,
+    case
+      when location_id in (88694128914, 88699109650) then 'offline'
+      else 'online'
+    end as channel,
+    case
+      when location_id in (88694128914, 88699109650) then 'kiosk'
+      else 'shopify'
+    end as sub_channel,
+    case
+      when location_id = 88694128914 then 'The Glen SC'
+      when location_id = 88699109650 then 'Westfield Doncaster'
+      else 'online'
+    end as location,
+    'RPGV' as company,
+    * except(company)
+FROM
+  ${ref("ccau_offline_orders")}

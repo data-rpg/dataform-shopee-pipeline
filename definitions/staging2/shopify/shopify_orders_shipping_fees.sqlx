@@ -1,0 +1,14 @@
+config {type: "table"}
+
+select 
+    *,
+    JSON_VALUE(shipping, '$.id') as shipping_id,
+    cast(JSON_VALUE(shipping, '$.price') as numeric) as shipping_price,
+    cast(json_value(replace(trim(to_json_string(JSON_EXTRACT_ARRAY(shipping, '$.tax_lines')),'[""]'),'\\',''),'$."price"') as numeric) as shipping_tax,
+    JSON_VALUE(shipping, '$.code') as code,
+    json_extract_scalar(shipping_address, '$.city') as shipping_address_city,
+    json_extract_scalar(shipping_address, '$.province') as shipping_address_state,
+    json_extract_scalar(shipping_address, '$.zip') as shipping_address_postcode
+FROM 
+  ${ref("shopify_orders_union")}, unnest(json_extract_array(shipping_lines)) as shipping
+

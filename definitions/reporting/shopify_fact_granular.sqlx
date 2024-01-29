@@ -1,0 +1,81 @@
+config {type: "table"}
+
+SELECT
+  trans_sales_line_type,
+
+  case
+    # main_brand for paperbag, engraving, stamping and BD team
+    when line_items_title = 'Cosmic Cookware Offline Paper Bag' then 'CC'
+    when line_items_title = 'Offline Store Paper Bags' then 'MT'
+    when line_items_name like '%Engraving%' and a.main_brand != 'TM' then 'MT'
+    when line_items_name like '%Stamping%' then 'MT'
+    when location in ('BD Team (Office)', 'BD Team (Events)') then 'BD'
+    # prioritize product brand and then store brand
+    when b.brand is not null then b.brand
+    else a.main_brand
+    
+  end as main_brand,
+
+  case
+    # main_brand for paperbag, engraving, stamping and BD team
+    when line_items_title = 'Cosmic Cookware Offline Paper Bag' then concat('CC', region)
+    when line_items_title = 'Offline Store Paper Bags' then concat('MT', region)
+    when line_items_name like '%Engraving%' and a.main_brand != 'TM' then concat('MT', region)
+    when line_items_name like '%Stamping%' then concat('MT', region)
+    when location in ('BD Team (Office)', 'BD Team (Events)') then 'BD'
+    when a.brand = 'BD' then 'BD'
+    # prioritize product brand and then store brand
+    when b.brand is not null then concat(b.brand, region)
+    else concat(a.main_brand, region)
+  end as brand,
+
+  a.main_brand as store_main_brand,
+  b.brand as product_main_brand,
+
+  case
+    when 
+      trans_sales_line_type in ('product') and (coalesce(trans_net_gross_sales,0) - coalesce(trans_net_discount,0) = 0) 
+      and (sum(coalesce(trans_net_gross_sales, 0) - coalesce(trans_net_discount, 0)) over(partition by order_id, trans_sales_line_type) = 0) 
+      -- or internal_staff_email = 'yes'  
+      then 'yes'
+    else 'no'
+  end as internal_order,
+
+  * except(trans_sales_line_type, brand, main_brand, bundle_sku), 
+
+  trans_net_gross_sales * exchange_rate_to_usd as trans_net_gross_sales_usd,
+  trans_net_discount * exchange_rate_to_usd as trans_net_discount_usd,
+  trans_net_shipping * exchange_rate_to_usd as trans_net_shipping_usd,
+  trans_net_line_items_refund * exchange_rate_to_usd as trans_net_line_items_refund_usd,
+  adjustment_amount * exchange_rate_to_usd as adjustment_amount_usd,
+  trans_net_returns * exchange_rate_to_usd as trans_net_returns_usd,
+  trans_gross_sales_tax * exchange_rate_to_usd as trans_gross_sales_tax_usd,
+  trans_discount_tax * exchange_rate_to_usd as trans_discount_tax_usd,
+  line_items_refund_tax * exchange_rate_to_usd as line_items_refund_tax_usd,
+  shipping_tax * exchange_rate_to_usd as shipping_tax_usd,
+  shipping_refund_tax * exchange_rate_to_usd as shipping_refund_tax_usd,
+  trans_net_tax * exchange_rate_to_usd as trans_net_tax_usd,
+  trans_net_sales * exchange_rate_to_usd as trans_net_sales_usd,
+  trans_total_sales * exchange_rate_to_usd as trans_total_sales_usd
+FROM
+  (
+    select * from ${ref("shopify_fact_granular_sales")}
+    union all
+    select * from ${ref("shopify_fact_granular_shippings")}
+    union all
+    select * from ${ref("shopify_fact_granular_shipping_refunds")}
+    union all
+    select * from ${ref("shopify_fact_granular_returns")}
+    union all
+    select * from ${ref("shopify_fact_granular_adjustments")}
+  ) a
+  
+left join
+  (select distinct bundle_sku, brand from ${ref("sku_master_unique")}) b
+on a.line_items_main_sku = b.bundle_sku
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+config {type: "table"}
+
+SELECT
+    'Luckymaxx' as main_brand, 
+    'Luckymaxx' as brand,
+    'MY' as region,
+    'offline' as channel,
+    'event' as sub_channel,
+    case
+      when location_id = 82469617947 then 'KL East Mall'
+      when location_id = 84705018139 then 'Megah Rise'
+      when location_id = 86289645851 then 'Menara TM'
+      when location_id = 85373714715 then 'Menara UOA Bangsar'
+      when location_id = 83300352283 then 'Nu Sentral'
+      when location_id = 82232508699 then 'Paradigm Mall'
+      when location_id = 83753926939 then 'Sunway University'
+      when location_id = 84706853147 then 'Taylor University'
+      else 'online'
+    end as location,    
+    'Luckymaxx' as company,
+    * except(company)
+FROM
+  ${ref("lmevents_orders")}

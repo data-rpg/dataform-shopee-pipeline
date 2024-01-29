@@ -1,0 +1,18 @@
+config {type: "table"}
+
+select
+  a.*,
+  discount_set,
+  cast(json_value(discount_set, '$.amount') as numeric) as discount
+from
+(
+    select 
+        *,
+        JSON_VALUE(line_items_discount, '$.id') as discount_line_items_id,
+        JSON_VALUE(line_items_discount, '$.variant_id') as discount_line_items_variant_id,
+        JSON_VALUE(line_items_discount, '$.gift_card') as discount_gift_card,
+        JSON_EXTRACT_ARRAY(line_items_discount, '$.discount_allocations') as discount_allocation,
+        json_value(replace(trim(to_json_string(discount_codes),'[""]'),'\\',''),'$."code"') as discount_code
+    from 
+        ${ref("shopify_orders_union")}, unnest(json_extract_array(line_items)) as line_items_discount
+) a, unnest(discount_allocation) as discount_set

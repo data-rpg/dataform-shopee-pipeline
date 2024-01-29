@@ -1,0 +1,34 @@
+config {type: "table"}
+
+select
+  case
+    when bundle_sku like "%MWS-KHAKI-%" then 'BL'
+    when contains_substr(mult_brand, 'TM') = true  then 'TM'
+    when contains_substr(mult_brand, 'BL') = true  then 'BL'
+    when contains_substr(mult_brand, 'PA') = true  then 'PA'
+    else mult_brand
+  end as brand,
+  bundle_sku,
+  item_sku,
+  test.collection,
+  test.product_line,
+  test.packs,
+  test.colour,
+  test.size,
+  test.product_group
+from
+  (
+    select
+      bundle_sku,
+      item_sku,
+      array_agg(struct(collection, product_line, packs, colour, size, product_group) order by collection, product_line, packs, colour, size, product_group)[OFFSET(0)] as test,
+      array_to_string(array_agg(distinct brand), ", ") as mult_brand
+    from 
+      ${ref("sku_master")}
+    group by
+      1,2
+  )
+
+
+
+

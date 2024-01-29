@@ -1,0 +1,18 @@
+config {type: "table"}
+
+select 
+    *,
+    JSON_VALUE(line_item, '$.id') as line_items_id,
+    JSON_VALUE(line_item, '$.variant_id') as line_items_variant_id,
+    JSON_VALUE(line_item, '$.gift_card') as line_items_gift_card,
+    JSON_VALUE(line_item, '$.sku') as line_items_main_sku,
+    JSON_VALUE(line_item, '$.name') as line_items_name,
+    JSON_VALUE(line_item, '$.title') as line_items_title,
+    JSON_VALUE(line_item, '$.fulfillment_status') as line_items_fulfillment_status,
+    JSON_VALUE(line_item, '$.taxable') as line_items_taxable,
+    cast(JSON_VALUE(line_item, '$.grams') as numeric) as line_items_grams,
+    cast(JSON_VALUE(line_item, '$.price') as numeric) as line_items_price,
+    cast(JSON_VALUE(line_item, '$.quantity') as numeric) as line_items_quantity
+
+from 
+    ${ref("shopify_orders_union")}, unnest(json_extract_array(line_items)) as line_item

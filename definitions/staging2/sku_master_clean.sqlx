@@ -1,0 +1,10 @@
+config {type: "table"}
+
+select
+    a.*,
+    count(a.item_sku) over(partition by a.bundle_sku) as count_in_bundle
+from 
+    ${ref("sku_master")} a
+inner join 
+    (select distinct bundle_sku, brand from ${ref("sku_master_unique")}) b
+on a.bundle_sku = b.bundle_sku and a.brand = b.brand

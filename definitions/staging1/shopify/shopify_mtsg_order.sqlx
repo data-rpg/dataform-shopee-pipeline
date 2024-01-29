@@ -1,0 +1,34 @@
+config {type: "table"}
+
+SELECT
+    'MT' as main_brand, 
+    'MTSG' as brand,
+    'SG' as region,
+    case
+      when shop_url = 'montigo-global' and (location_id in (72028750074, 72036352250, 72506441978, 72808005882, 72036385018, 62621778083, 72017019130)) then 'offline'
+      else 'online'
+    end as channel,
+    case  
+      when shop_url = 'montigo-global' and location_id = 72028750074 then 'kiosk'  
+      when shop_url = 'montigo-global' and location_id = 72036352250 then 'pos'
+      when shop_url = 'montigo-global' and location_id = 72506441978 then 'pos'
+      when shop_url = 'montigo-global' and location_id = 72808005882 then 'roadshow'
+      when shop_url = 'montigo-global' and location_id = 72036385018 then 'roadshow'
+      when shop_url = 'montigo-global' and location_id = 62621778083 then 'pos'
+      when shop_url = 'montigo-global' and location_id = 72017019130 then 'roadshow'
+      else 'shopify'
+    end as sub_channel,
+    case
+      when shop_url = 'montigo-global' and location_id = 72028750074 then 'WestGate'
+      when shop_url = 'montigo-global' and location_id = 72036352250 then 'Tampines Mall'
+      when shop_url = 'montigo-global' and location_id = 72506441978 then 'Takashimaya'
+      when shop_url = 'montigo-global' and location_id = 72808005882 then 'Roadshow Nov-Dec 2023'
+      when shop_url = 'montigo-global' and location_id = 72036385018 then 'Junction 8'
+      when shop_url = 'montigo-global' and location_id = 62621778083 then '151 Chin Swee Rd'
+      when shop_url = 'montigo-global' and location_id = 72017019130 then 'Roadshow @ 313 Somerset'
+      else 'online' 
+    end as location,  
+    'RPGV' as company,
+    * except(company)
+FROM
+  ${ref("mtsg_orders")}

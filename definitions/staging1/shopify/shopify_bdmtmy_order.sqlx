@@ -1,0 +1,13 @@
+config {type: "table"}
+
+SELECT 
+    'BD' as main_brand, 
+    'BD' as brand,
+    'MY' as region,
+    'online' as channel,
+    'shopify' as sub_channel,
+    'online' as location,
+    'Luckymaxx' as company,
+    * except(company)
+FROM
+  ${ref("bdmtmy_orders")}

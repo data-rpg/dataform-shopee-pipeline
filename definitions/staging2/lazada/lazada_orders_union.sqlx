@@ -4,8 +4,12 @@ SELECT
     *, 
     ${mapping.convert_to_local2('created_at')} AS created_at_lcl,
     ${mapping.convert_to_local2('updated_at')} AS updated_at_lcl,
-    ${mapping.order_count('address_billing_first_name','created_at')} AS order_count,
+    ROW_NUMBER() OVER(PARTITION BY (address_billing_first_name) ORDER BY created_at) as order_count,
     replace(replace(replace(statuses, "'", ""), "[", ""), "]", "") as status,
+    case
+      when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
+      when REGEXP_CONTAINS(brand, r"SG") = true then 0.7831
+    end as exchange_rate_to_usd,
 FROM
   (
     select * from ${ref("lazada_blmy_order")}
@@ -13,6 +17,7 @@ FROM
     select * from ${ref("lazada_blsg_order")}
     union all
     select * from ${ref("lazada_ccmy_order")}
+
     union all
     select * from ${ref("lazada_ccsg_order")}
     union all

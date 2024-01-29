@@ -1,0 +1,188 @@
+config {type: "table"}
+
+select
+    id as order_id,
+    shop_url as store_name,
+    name as order_name,  
+    case 
+        when cancelled_at is not null then 'yes' 
+        else 'no'
+    end as cancelled,   
+    row_number() over(partition by JSON_EXTRACT_SCALAR(customer, '$.id') order by created_at) as order_count,
+    email as customer_email,
+    JSON_EXTRACT_SCALAR(customer, '$.first_name') as customer_first_name,
+    JSON_EXTRACT_SCALAR(customer, '$.last_name') as customer_last_name,
+    JSON_EXTRACT_SCALAR(customer, '$.id') as customer_id,
+    case 
+      when email like '%rpg.ventures%' then 'yes' 
+      else 'no' 
+    end as internal_staff_email,
+    case 
+      when 
+        tags like "Sponsorship/Collaboration" or tags like "Consignment" or tags like "Wholesale" or tags like "B2B Sampling" or 
+        tags like "Corporate Order (Customiser)" or tags like "B2B Events" then 'yes'
+        else 'no'
+    end as b2b_orders,
+    regexp_extract(tags,r'L2\-([^\,]*)') as order_type,
+    case 
+      when tags like '%Sponsorship/Collaboration%' then 'B2B'
+      when tags like '%Consignment%' then 'B2B'
+      when tags like '%Wholesale%' or tags like '%Corporate Order (Client)%' or tags like '%Corporate order (Client)%'or tags like '%Corporate Order%'  then 'B2B'
+      when tags like '%B2B Sampling%' then 'B2B'
+      when tags like '%Corporate order (Customizer)%' or tags like '%Corporate order (Customiser)%' or tags like '%Corporate Order (Customiser)%' then 'B2B'
+      when tags like '%HR%' then 'HR'
+      when tags like '%Photoshoot%' then 'Marketing'
+      when tags like '%Influencer (Campaign)%' then 'Marketing'
+      when tags like '%Influencer (Seeding)%' then 'Marketing'
+      when tags like '%Giveaway%' then 'Marketing'
+      when tags like '%PR / Events%' or tags like '%PR/Events%' or tags like '%PR%/%Events%' then 'Marketing'
+      when tags like '%Offline Store%' or tags like '%Offline%' then 'Offline'
+      when tags like '%Sampling%' then 'Product'
+      when tags like '%Dog Fooding%' then 'Product'
+      when tags like '%Internal Transfer%' then 'Supply'
+      when tags like '%Reserve%' then 'Supply'
+      when tags like '%Testing%' then 'Others'
+      when tags like '%System bug%' then 'Others'
+      when tags like '%OOS Replacement%' then 'Brand Policy'
+      when tags like '%Wear and Tear Replacement%' then 'Brand Policy'
+      when tags like '%Defect Replacement%' then 'Defects'
+      when tags like '%DNR Replacement%' then 'Delivery Issues'
+      when tags like '%RTS Replacement%' then 'Delivery Issues'
+      when tags like '%Error Replacement%' then 'Fulfilment Error'
+      when tags like '%Late Fulfilment%' then 'Fulfilment Error'
+      when tags like '%Manifest Error%' then 'Fulfilment Error'
+      when tags like '%Cancellation%' then 'Order Changes'
+      when tags like '%Amend Order%' then 'Order Changes'
+      when tags like '%Manual Invoice%' then 'Order Changes'
+      when tags like '%Exchange%' then 'Return'
+      when tags like '%Refund%' then 'Return'
+      when tags like '%Lazada%' then 'Lazada'
+      when tags like '%Shopee%' then 'Shopee'
+      when tags like '%TikTok%' then 'TikTok' 
+    end as order_type_1,
+    case
+          when currency = 'USD' then 1
+          when currency = 'MYR' then 0.2238
+          when currency = 'AUD' then 0.6849
+          when currency = 'SGD' then 0.7831
+          when currency = 'GBP' then 1.1648
+          when currency = 'EUR' then 1.0422
+          when currency = 'CNH' then 0.1407
+          when currency = 'AED' then 0.2723 #xe.com exchnage rate
+    end as exchange_rate_to_usd,
+
+    case
+      when region = 'MY' and channel = 'offline' then 'Malaysia'
+      when region = 'SG' and channel = 'offline' then 'Singapore'
+      when region = 'AU' and channel = 'offline' then 'Australia'
+      else JSON_EXTRACT_SCALAR(shipping_address, '$.country')
+    end as add_shipping_country,
+    case
+      when region = 'MY' and channel = 'offline' then 'MY'
+      when region = 'SG' and channel = 'offline' then 'SG'
+      when region = 'AU' and channel = 'offline' then 'AU'
+      else JSON_EXTRACT_SCALAR(shipping_address, '$.country')
+    end as add_shipping_countrycode,
+    JSON_EXTRACT_SCALAR(shipping_address, '$.city') as add_shipping_city,
+    JSON_EXTRACT_SCALAR(shipping_address, '$.zip') as add_shipping_zip,
+    JSON_EXTRACT_SCALAR(shipping_address, '$.province') as add_shipping_province,
+    JSON_EXTRACT_SCALAR(shipping_address, '$.address1') as add_shipping_address1,
+    JSON_EXTRACT_SCALAR(shipping_address, '$.address2') as add_shipping_address2,
+    JSON_EXTRACT_SCALAR(billing_address, '$.country') as add_billing_country,
+    JSON_EXTRACT_SCALAR(billing_address, '$.country_code') as add_billing_countrycode,
+
+    CASE 
+      WHEN REGEXP_CONTAINS(LOWER(landing_site), r'facebook') THEN 'meta' 
+      WHEN REGEXP_CONTAINS(LOWER(landing_site), r'google') THEN 'google'
+      WHEN REGEXP_CONTAINS(LOWER(landing_site), r'tiktok') THEN 'tiktok'
+      WHEN REGEXP_CONTAINS(LOWER(landing_site), r'instagram') or REGEXP_CONTAINS(LOWER(landing_site), r'IGShopping') THEN 'meta' 
+      WHEN REGEXP_CONTAINS(LOWER(landing_site), r'bing') THEN 'bing'
+    END as referring_channel,
+  regexp_extract(landing_site,r'utm\_source\=([^&]*)\&*') as utm_source,
+  regexp_extract(landing_site,r'utm\_medium\=([^&]*)\&*') as utm_medium,
+  regexp_extract(landing_site,r'uniontm\_campaign\=([^&]*)\&*') as utm_campaign,
+  
+  right(processed_at, 6) as utc_adjustment_string,
+
+  datetime(created_at) as created_at,
+  format_datetime("%F", datetime(created_at)) as created_dt,
+  ${mapping.convert_to_local3("created_at", "processed_at", "%FT%X")} as adjusted_created_at,
+  ${mapping.convert_to_local3("created_at", "processed_at", "%F")} as adjusted_created_dt,
+
+  datetime(cancelled_at) as cancelled_at,
+  format_datetime("%F", datetime(cancelled_at)) as cancelled_dt,
+  ${mapping.convert_to_local3("cancelled_at", "processed_at", "%FT%X")} as adjusted_cancelled_at,
+  ${mapping.convert_to_local3("cancelled_at", "processed_at", "%F")} as adjusted_cancelled_dt,
+
+  datetime(closed_at) as closed_at,
+  format_datetime("%F", datetime(closed_at)) as closed_dt,
+  ${mapping.convert_to_local3("closed_at", "processed_at", "%FT%X")} as adjusted_closed_at,
+  ${mapping.convert_to_local3("closed_at", "processed_at", "%F")} as adjusted_closed_dt,
+
+  datetime(left(processed_at, 19)) as processed_at,
+  date(left(processed_at, 10)) as processed_dt,
+
+  * except(cancelled_at, created_at, processed_at, closed_at)
+
+    
+FROM
+  (
+    select * from ${ref("shopify_bdmtmy_order")}
+    union all
+    select * from ${ref("shopify_blau_order")}
+    union all
+    select * from ${ref("shopify_blmy_order")}
+    union all
+    select * from ${ref("shopify_blrow_order")}
+    union all
+    select * from ${ref("shopify_blsg_order")}
+    union all
+    select * from ${ref("shopify_blus_order")}
+    union all
+    select * from ${ref("shopify_ccau_offline_order")}
+    union all
+    select * from ${ref("shopify_ccau_order")}
+    union all
+    select * from ${ref("shopify_ccmy_order")}
+    union all
+    select * from ${ref("shopify_ccsg_order")}
+    union all
+    select * from ${ref("shopify_ccuae_order")}
+    union all
+    select * from ${ref("shopify_crrow_order")}
+    union all
+    select * from ${ref("shopify_ebau_order")}
+    union all
+    select * from ${ref("shopify_ebeu_order")}
+    union all
+    select * from ${ref("shopify_ebsg_order")}
+    union all
+    select * from ${ref("shopify_ebuk_order")}
+    union all
+    select * from ${ref("shopify_lmevents_order")}
+    union all
+    select * from ${ref("shopify_luckymax_order")}
+    union all
+    select * from ${ref("shopify_mtmy_order")}
+    union all
+    select * from ${ref("shopify_mtsg_order")}
+    union all
+    select * from ${ref("shopify_mtuae_order")}
+    union all
+    select * from ${ref("shopify_offline_order")}
+    union all
+    select * from ${ref("shopify_rtmy_order")}
+    union all
+    select * from ${ref("shopify_tmau_order")}
+    union all
+    select * from ${ref("shopify_tmeu_order")}
+    union all
+    select * from ${ref("shopify_tmmy_order")}
+    union all
+    select * from ${ref("shopify_tmrow_order")}
+    union all
+    select * from ${ref("shopify_tmuk_order")}
+    union all
+    select * from ${ref("shopify_tmus_order")}    
+  )
+  

@@ -2,7 +2,7 @@ config {type: "table"}
 
 SELECT 
     *,
-    ${mapping.convert_to_local3('transaction_date')} as transaction_dt,
+    FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%d %b %Y', transaction_date)) as transaction_dt,
     ${mapping.get_new_fee_name('fee_name', 'transaction_type')} as new_fee_name,
     trim(replace(replace(replace(replace(concat(lower(transaction_type),'_',
                                                       lower(${mapping.get_new_fee_name('fee_name', 'transaction_type')}))

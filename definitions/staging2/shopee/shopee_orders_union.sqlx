@@ -6,7 +6,11 @@ SELECT
     ${mapping.convert_to_local('update_time')} AS updated_at,
     ${mapping.convert_to_local('ship_by_date')} AS ship_by_at,
     ${mapping.convert_to_local('pay_time')} AS pay_at,
-    ${mapping.order_count('buyer_user_id','create_time')} AS order_count,
+    ROW_NUMBER() OVER(PARTITION BY (buyer_user_id) ORDER BY create_time) as order_count,
+    case
+          when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
+          when REGEXP_CONTAINS(brand, r"SG") = true then 0.7831
+    end as exchange_rate_to_usd,
 FROM
   (
     select * from ${ref("shopee_blmy_order")}

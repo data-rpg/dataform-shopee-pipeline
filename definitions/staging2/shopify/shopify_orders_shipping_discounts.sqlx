@@ -1,0 +1,12 @@
+config {type: "table"}
+
+select 
+  *,
+  cast(JSON_VALUE(discount, '$.amount') as numeric) as discount_amount,
+  JSON_VALUE(discount, '$.type') as discount_type,
+  JSON_VALUE(discount, '$.code') as discount_code
+FROM 
+  ${ref("shopify_orders_union")}, unnest(json_extract_array(discount_codes)) as discount
+where
+  JSON_VALUE(discount, '$.type') = 'shipping'
+
