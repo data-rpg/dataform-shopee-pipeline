@@ -23,7 +23,7 @@ SELECT
     when line_items_name like '%Engraving%' and a.main_brand != 'TM' then concat('MT', region)
     when line_items_name like '%Stamping%' then concat('MT', region)
     when location in ('BD Team (Office)', 'BD Team (Events)') then 'BD'
-    when a.brand = 'BD' then 'BD'
+    -- when a.brand = 'BD' then 'BD'
     # prioritize product brand and then store brand
     when b.brand is not null then concat(b.brand, region)
     else concat(a.main_brand, region)
