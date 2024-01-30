@@ -20,7 +20,7 @@ select
     case 
       when 
         tags like "Sponsorship/Collaboration" or tags like "Consignment" or tags like "Wholesale" or tags like "B2B Sampling" or 
-        tags like "Corporate Order (Customiser)" or tags like "B2B Events" then 'yes'
+        tags like "Corporate Order (Customiser)" or tags like "B2B Events" then 'yes' or shop_url = 'bd-consignment'
         else 'no'
     end as b2b_orders,
     regexp_extract(tags,r'L2\-([^\,]*)') as order_type,
