@@ -1,0 +1,13 @@
+config {type: "table"}
+
+SELECT
+    'Luckymaxx' as main_brand, 
+    'Luckymaxx' as brand,
+    'MY' as region,
+    'offline' as channel,
+    'superhome' as sub_channel,
+    'Starling' as location,    
+    'Luckymaxx' as company,
+    * except(company)
+FROM
+  ${ref("luckymax_orders")}

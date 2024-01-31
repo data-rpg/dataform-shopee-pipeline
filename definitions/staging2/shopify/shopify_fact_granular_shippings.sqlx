@@ -1,0 +1,132 @@
+config {type: "table"}
+
+with  
+  cte_base as (
+    select
+        'shipping' as trans_sales_line_type,
+        'order' as sale_kind,
+        'shipping' as sale_line_type,
+        a.* except(created_at, created_dt, cancelled_dt, closed_dt, processed_dt, adjusted_created_dt, adjusted_created_at, adjusted_cancelled_dt, adjusted_closed_dt, shipping_price, shipping_tax),
+        a.processed_dt as shipping_processed_dt,
+        a.adjusted_created_dt as created_dt,
+        a.adjusted_created_at as created_at,
+        a.adjusted_cancelled_dt as cancelled_dt,
+        a.adjusted_closed_dt as closed_dt,
+        a.shipping_price as total_shipping_price,
+        a.shipping_tax as shipping_tax,
+        b.discount_amount as shipping_discount,
+        b.discount_count as shipping_discount_count
+    from
+      ${ref("shopify_orders_shipping_fees")} a
+      
+    left join
+      (
+        select 
+          order_id, 
+          sum(discount_amount) as discount_amount, 
+          count(discount_amount) as discount_count  
+        from 
+          ${ref("shopify_orders_shipping_discounts")} 
+        group by 1
+      ) b
+    on a.order_id = b.order_id
+  )
+
+    select
+      'shipping' as trans_sales_line_type,
+      'order' as sale_kind,
+      'shipping' as sale_line_type,
+      main_brand,
+      brand,
+      region,
+      channel,
+      sub_channel,
+      location,
+      location_id,
+      store_name,
+      order_id,
+      source_name,
+      payment_gateway_names,
+      company,
+      order_name,
+      cancelled,
+      order_count,
+      fulfillment_status,
+      financial_status, 
+      customer_email, 
+      customer_first_name,
+      customer_last_name,
+      customer_id,
+      currency,
+      add_shipping_country, 
+      add_shipping_countrycode, 
+      add_shipping_city,
+      add_shipping_zip,
+      add_shipping_province,
+      add_shipping_address1,
+      add_shipping_address2, 
+      add_billing_country, 
+      add_billing_countrycode, 
+      tags, 
+      order_type,
+      order_type_1,
+      internal_staff_email, 
+      b2b_orders,
+
+      shipping_id as line_items_id,
+      cast(null as string) as variant_id,
+      'false' as line_items_gift_card,
+      cast(null as string) as line_items_main_sku,
+      cast(null as string) as line_items_name,
+      cast(null as string) as line_items_title,
+      cast(null as string) as line_items_fulfillment_status,
+      null as line_items_grams,
+
+      created_dt as created_dt,
+      created_at as created_at,
+      cancelled_dt,
+      closed_dt,
+      cast(null as date) as items_return_created_dt,
+      cast(null as date) as order_adjustment_created_dt,
+      cast(null as date) as shipping_refund_created_dt,
+      shipping_processed_dt as processed_dt,
+
+      null as line_item_price,
+      null as line_item_quantity,
+      null as variant_compare_at_price,
+      null as trans_gross_sales_tax_inclusive,
+      null as item_tax_rate,
+      null as item_tax,
+      null as trans_gross_sales_tax,
+      null as trans_net_gross_sales,
+
+      cast(null as string) as discount_code,
+      null as discount_tax_inclusive,
+      null as trans_discount_tax,
+      null as trans_net_discount,
+      null as trans_discount_count,
+
+      total_shipping_price,
+      shipping_discount,
+      shipping_discount_count as trans_shipping_discount_count,
+      shipping_tax,   
+      ((coalesce(total_shipping_price,0) - coalesce(shipping_discount,0) - coalesce(shipping_tax,0))) as trans_net_shipping_before_return,
+      null as shipping_refund_amount_tax_exclusive,
+      null as shipping_refund_tax,
+      ((coalesce(total_shipping_price,0) - coalesce(shipping_discount,0) - coalesce(shipping_tax,0))) as trans_net_shipping,  
+
+      null as line_items_refund_tax_inclusive,
+      null as line_items_refund_tax,
+      null as trans_net_line_items_refund,
+      null as adjustment_amount,
+      null as trans_net_returns,
+
+      ((coalesce(total_shipping_price,0) - coalesce(shipping_discount,0) - coalesce(shipping_tax,0))) as trans_net_sales,      
+      shipping_tax as trans_net_tax,
+      ((coalesce(total_shipping_price,0) - coalesce(shipping_discount,0) - coalesce(shipping_tax,0))) + coalesce(shipping_tax,0) as trans_total_sales,
+
+      exchange_rate_to_usd
+
+    from
+      cte_base
+   

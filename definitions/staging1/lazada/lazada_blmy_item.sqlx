@@ -2,7 +2,7 @@ config {type: "table"}
 
 SELECT
     'BL' as main_brand, 
-    'BLMY-Shopee' as brand,
+    'BLMY-Lazada' as brand,
     *
 FROM
   ${ref("lazada_item_details_blmy")}

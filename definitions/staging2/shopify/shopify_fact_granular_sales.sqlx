@@ -1,0 +1,158 @@
+config {type: "table"}
+
+with    
+    cte_base as (
+        select 
+            'product' as trans_sales_line_type,
+            'order' as sale_kind,
+            'product' as sale_line_type,
+            a.* except(created_at, created_dt, cancelled_dt, closed_dt, processed_dt, adjusted_created_dt, adjusted_created_at, adjusted_cancelled_dt, adjusted_closed_dt, line_items_price, line_items_quantity),
+            a.processed_dt as orders_processed_dt,
+            a.adjusted_created_dt as created_dt,
+            a.adjusted_created_at as created_at,
+            a.adjusted_cancelled_dt as cancelled_dt,
+            a.adjusted_closed_dt as closed_dt,
+            a.line_items_price as line_item_price,
+            a.line_items_quantity as line_item_quantity,
+            cast(v.variant_compare_at_price as numeric) as variant_compare_at_price,
+            (a.line_items_price * a.line_items_quantity) as gross_sales,
+            b.discount_code,
+            b.discount_amount as total_discount,
+            b.discount_count,        
+            c.after_discount_tax_rate as order_tax_rate,
+            c.after_discount_tax as after_discount_items_tax,
+            coalesce(b.discount_amount, 0)*coalesce(c.after_discount_tax_rate, 0)/(1+coalesce(c.after_discount_tax_rate, 0)) as discount_tax,
+            coalesce(c.after_discount_tax, 0)+coalesce(b.discount_amount, 0)*coalesce(c.after_discount_tax_rate, 0)/(1+coalesce(c.after_discount_tax_rate, 0)) as before_discount_items_tax,
+        from
+            ${ref("shopify_orders_line_items")} a
+
+        left join
+            (
+                select 
+                    order_id, 
+                    discount_line_items_id, 
+                    discount_gift_card, 
+                    discount_code, 
+                    sum(discount) as discount_amount, 
+                    count(discount) as discount_count 
+                from 
+                    ${ref("shopify_orders_discounts")} group by 1,2,3,4
+            ) b
+        on a.order_id = b.order_id and cast(a.line_items_id as string) = b.discount_line_items_id
+
+        left join
+            (
+                select 
+                    order_id, 
+                    tax_line_items_id, 
+                    tax_gift_card, 
+                    sum(tax) as after_discount_tax, 
+                    avg(tax_rate) as after_discount_tax_rate 
+                from 
+                    ${ref("shopify_orders_taxes")} 
+                group by 1,2,3
+            ) c
+        on a.order_id = b.order_id and cast(a.line_items_id as string) = c.tax_line_items_id
+
+        left join -- Assign compare_at_price
+            `rpg-dw-ingestion.refund_test.products_variants` v
+        on a.line_items_variant_id = v.variant_id
+    )
+
+select
+    'product' as trans_sales_line_type,
+    'order' as sale_kind,
+    'product' as sale_line_type,
+    main_brand,
+    brand,
+    region,
+    channel,
+    sub_channel,
+    location,
+    location_id,
+    store_name,
+    order_id,
+    source_name,    
+    payment_gateway_names,  
+    company,
+    order_name,
+    cancelled,
+    order_count,
+    fulfillment_status,
+    financial_status, 
+    customer_email, 
+    customer_first_name,
+    customer_last_name,
+    customer_id,
+    currency,
+    add_shipping_country, 
+    add_shipping_countrycode,
+    add_shipping_city,
+    add_shipping_zip,
+    add_shipping_province,  
+    add_shipping_address1,
+    add_shipping_address2,
+    add_billing_country, 
+    add_billing_countrycode, 
+    tags, 
+    order_type,
+    order_type_1,
+    internal_staff_email, 
+    b2b_orders,
+
+    line_items_id,
+    line_items_variant_id as variant_id,
+    line_items_gift_card,
+    line_items_main_sku,
+    line_items_name,
+    line_items_title,
+    line_items_fulfillment_status,
+    line_items_grams,
+
+    created_dt,
+    created_at,
+    cancelled_dt,
+    closed_dt,
+    cast(null as date) as items_return_created_dt,
+    cast(null as date) as order_adjustment_created_dt,
+    cast(null as date) as shipping_refund_created_dt,
+    orders_processed_dt as processed_dt,
+
+    line_item_price,
+    line_item_quantity,
+    variant_compare_at_price,
+    gross_sales as trans_gross_sales_tax_inclusive,
+    order_tax_rate as item_tax_rate,
+    after_discount_items_tax as item_tax,
+    before_discount_items_tax as trans_gross_sales_tax,
+    gross_sales - coalesce(before_discount_items_tax, 0) as trans_net_gross_sales,
+
+    discount_code,
+    total_discount as discount_tax_inclusive,
+    discount_tax as trans_discount_tax,
+    coalesce(total_discount, 0) - coalesce(discount_tax,0) as trans_net_discount,
+    discount_count as trans_discount_count,
+
+    null as total_shipping_price,
+    null as shipping_discount,
+    null as trans_shipping_discount_count,
+    null as shipping_tax, 
+    null as trans_net_shipping_before_return,
+    null as shipping_refund_amount_tax_exclusive,
+    null as shipping_refund_tax,
+    null as trans_net_shipping,
+
+    null as line_items_refund_tax_inclusive,
+    null as line_items_refund_tax,
+    null as trans_net_line_items_refund,
+    null as adjustment_amount,
+    null as trans_net_returns,
+
+    gross_sales - coalesce(before_discount_items_tax, 0) - (coalesce(total_discount, 0) - coalesce(discount_tax,0)) as trans_net_sales,
+    (before_discount_items_tax - discount_tax) as trans_net_tax,
+    gross_sales - coalesce(before_discount_items_tax, 0) - (coalesce(total_discount, 0) - coalesce(discount_tax,0)) + (before_discount_items_tax - discount_tax) as trans_total_sales,
+
+    exchange_rate_to_usd
+
+from
+    cte_base

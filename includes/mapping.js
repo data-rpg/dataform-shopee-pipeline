@@ -1,19 +1,13 @@
-function convert_to_local(number){
+function convert_to_local(number){ //convert from numeric
     return `format_timestamp("%FT%X", timestamp_add(timestamp_seconds(cast(safe_cast(${number} as numeric) as int64)), INTERVAL 8 hour))`;
 }
 
-function convert_to_local2(created_at){
+function convert_to_local2(created_at){ //convert from "%Y-%m-%d %X %z"
     return `format_timestamp("%FT%X", timestamp_add(timestamp_seconds(cast(format_timestamp("%s",PARSE_TIMESTAMP("%Y-%m-%d %X %z" ,${created_at})) as int64)), INTERVAL 8 hour))`;
 }
 
-function convert_to_local3(created_dt){
-    return `FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%d %b %Y', ${created_dt}))`;
-}
-
-function order_count(user, date){
-    return `
-    ROW_NUMBER() OVER(PARTITION BY (${user}) ORDER BY ${convert_to_local(date)})
-    `;
+function convert_to_local3(utc_at, local_at, fmt){
+    return `format_timestamp("${fmt}", timestamp(${utc_at}), right(${local_at}, 6))`;
 }
 
 function string_array_to_json(stringified_array){ /* [{'A': 1, 'B': "Funfetti Knight's Tumbler", 'C': True}, {'A': 2, 'B': "Disney Ace Bottle Medium", 'C': False}] 
@@ -85,7 +79,6 @@ module.exports = {
                     convert_to_local, 
                     convert_to_local2, 
                     convert_to_local3, 
-                    order_count, 
                     string_array_to_json, 
                     get_new_fee_name, 
                     pivot_col_name 

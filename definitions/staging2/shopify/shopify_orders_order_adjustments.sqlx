@@ -1,0 +1,38 @@
+config {type: "table"}
+
+SELECT 
+  * except(processed_at, processed_dt, created_at, created_dt, adjusted_created_at, adjusted_created_dt),
+  JSON_VALUE(refund, '$.id') as refund_id,
+
+  created_at as order_created_at,
+  created_dt as order_created_dt,
+
+  adjusted_created_at as adjusted_order_created_at,
+  adjusted_created_dt as adjusted_order_created_dt, 
+
+  processed_at as order_processed_at,
+  processed_dt as order_processed_dt,
+
+  datetime(timestamp(JSON_VALUE(refund, '$.created_at'))) as created_at,
+  format_datetime("%F", datetime(timestamp(JSON_VALUE(refund, '$.created_at')))) as created_dt,
+  datetime(left(JSON_VALUE(refund, '$.created_at'), 19)) as adjusted_created_at,
+  date(left(JSON_VALUE(refund, '$.created_at'), 10)) as adjusted_created_dt, 
+
+  datetime(left(JSON_VALUE(refund, '$.processed_at'), 19)) as processed_at,
+  date(left(JSON_VALUE(refund, '$.processed_at'), 10)) as processed_dt,
+
+  -- order_adjustment,
+  JSON_VALUE(order_adjustment, '$.id') as order_adjustment_id, 
+  cast(JSON_VALUE(order_adjustment, '$.amount') as numeric) as order_adjustment_amount,
+  cast(JSON_VALUE(order_adjustment, '$.tax_amount') as numeric) as order_adjustment_tax,
+  JSON_VALUE(order_adjustment, '$.kind') as order_adjustment_kind,
+  JSON_VALUE(order_adjustment, '$.reason') as order_adjustment_reason,
+  JSON_VALUE(refund, '$.restock') as order_adjustment_restock,
+
+from
+  (
+    select * from ${ref("shopify_orders_union")}, unnest(json_extract_array(refunds)) as refund
+  ), unnest(json_extract_array(refund, '$.order_adjustments')) as order_adjustment
+  
+
+

@@ -1,0 +1,75 @@
+config {type: "table"}
+
+SELECT
+    'MT' as main_brand, 
+    'MTMY' as brand,
+    'MY' as region,
+    'offline' as channel,
+    case  
+      when shop_url = 'rpg-offline' and location_id = 81029431588 then 'kiosk'
+      when shop_url = 'rpg-offline' and location_id = 81028612388 then 'kiosk'
+      when shop_url = 'rpg-offline' and location_id = 81029071140 then 'kiosk'
+      when shop_url = 'rpg-offline' and location_id = 81028808996 then 'kiosk'
+      when shop_url = 'rpg-offline' and location_id = 76256706852 then 'kiosk'
+      when shop_url = 'rpg-offline' and location_id = 81993662756 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 81993761060 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 81999855908 then 'roadshow'
+      when shop_url = 'rpg-offline' and location_id = 82798117156 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 83602735396 then 'kiosk'
+      when shop_url = 'rpg-offline' and location_id = 83315097892 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 83455377700 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 83315065124 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 84047429924 then 'roadshow'
+      when shop_url = 'rpg-offline' and location_id = 87270359332 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 88934940964 then 'kiosk'
+      when shop_url = 'rpg-offline' and location_id = 89705775396 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 90205487396 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 84489273636 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 84489240868 then 'pushcart'
+      when shop_url = 'rpg-offline' and location_id = 91569226020 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 93209821476 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 93040050468 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 93040181540 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 93040247076 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 91231060260 then 'superhome'
+      when shop_url = 'rpg-offline' and location_id = 85226651940 then 'bd'
+      when shop_url = 'rpg-offline' and location_id = 83885654308 then 'bd'
+      when shop_url = 'rpg-offline' and location_id = 93876584740 then 'roadshow'
+      when shop_url = 'rpg-offline' and location_id = 94619631908 then 'superhome' 
+    end as sub_channel,
+    case
+      when shop_url = 'rpg-offline' and location_id = 81029431588 then 'Starling'
+      when shop_url = 'rpg-offline' and location_id = 81028612388 then 'I-City'
+      when shop_url = 'rpg-offline' and location_id = 81029071140 then 'Paradigm Mall'
+      when shop_url = 'rpg-offline' and location_id = 81028808996 then 'KL East Mall'
+      when shop_url = 'rpg-offline' and location_id = 76256706852 then 'KLCC'
+      when shop_url = 'rpg-offline' and location_id = 81993662756 then 'Pushcarts EkoCheras Mall'
+      when shop_url = 'rpg-offline' and location_id = 81993761060 then 'Pushcart MyTown'
+      when shop_url = 'rpg-offline' and location_id = 81999855908 then '1Utama Roadshow'
+      when shop_url = 'rpg-offline' and location_id = 82798117156 then '1Utama Main Store'
+      when shop_url = 'rpg-offline' and location_id = 83602735396 then 'IOI City Mall Putrajaya'
+      when shop_url = 'rpg-offline' and location_id = 83315097892 then 'Pushcart Empire Shopping Gallery'
+      when shop_url = 'rpg-offline' and location_id = 83455377700 then 'Pushcart IPC'
+      when shop_url = 'rpg-offline' and location_id = 83315065124 then 'Pushcart Pavilion Bukit Jalil'
+      when shop_url = 'rpg-offline' and location_id = 84047429924 then 'Nu Sentral Mall Roadshow'
+      when shop_url = 'rpg-offline' and location_id = 87270359332 then 'Pushcart Nu Sentral'
+      when shop_url = 'rpg-offline' and location_id = 88934940964 then 'Queensbay Penang'
+      when shop_url = 'rpg-offline' and location_id = 89705775396 then 'Tropicana Gardens Mall'
+      when shop_url = 'rpg-offline' and location_id = 90205487396 then 'Mitsui Outlet Park'
+      when shop_url = 'rpg-offline' and location_id = 84489273636 then 'Pushcart DPulze Shopping Centre'
+      when shop_url = 'rpg-offline' and location_id = 84489240868 then 'Pushcart Setia City Mall'
+      when shop_url = 'rpg-offline' and location_id = 91569226020 then 'Sunway Velocity'
+      when shop_url = 'rpg-offline' and location_id = 93209821476 then 'Sunway Pyramid'
+      when shop_url = 'rpg-offline' and location_id = 93040050468  then 'Pavilion Damansara'
+      when shop_url = 'rpg-offline' and location_id = 93040181540 then 'Pavilion KL Montigo'
+      when shop_url = 'rpg-offline' and location_id = 93040247076 then 'Pavilion KL Cosmic Cookware'
+      when shop_url = 'rpg-offline' and location_id = 91231060260 then 'Lalaport'
+      when shop_url = 'rpg-offline' and location_id = 85226651940 then 'BD Team (Office)'
+      when shop_url = 'rpg-offline' and location_id = 83885654308 then 'BD Team (Events)' 
+      when shop_url = 'rpg-offline' and location_id = 93876584740 then 'KLCC Roadshow' 
+      when shop_url = 'rpg-offline' and location_id = 94619631908 then 'Mid Valley' 
+    end as location,  
+    'RPGC' as company,
+    * except(company)
+FROM
+  ${ref("offline_orders")}

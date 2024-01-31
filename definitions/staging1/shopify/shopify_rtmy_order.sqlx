@@ -1,0 +1,13 @@
+config {type: "table"}
+
+SELECT
+    'RT' as main_brand, 
+    'RTMY' as brand,
+    'MY' as region,
+    'online' as channel,
+    'shopify' as sub_channel,
+    'online' as location,    
+    'SuperNova' as company,
+    * except(company)
+FROM
+  ${ref("rtmy_orders")}

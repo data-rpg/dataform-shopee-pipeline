@@ -1,0 +1,119 @@
+config {type: "table"}
+
+with  
+  cte_base as (
+    select 
+      a.* except(order_created_at, order_created_dt, cancelled_dt, closed_dt, processed_dt, adjusted_created_dt, adjusted_order_created_dt, adjusted_order_created_at, adjusted_cancelled_dt, adjusted_closed_dt, refund_item_line_item_amount, refund_item_line_item_tax),
+      a.processed_dt as return_items_processed_dt,
+      a.adjusted_created_dt as items_return_created_dt,
+      a.adjusted_order_created_dt as order_created_dt,
+      a.adjusted_order_created_at as order_created_at,
+      a.adjusted_cancelled_dt as cancelled_dt,
+      a.adjusted_closed_dt as closed_dt,
+      cast(b.variant_compare_at_price as numeric) as variant_compare_at_price,
+      a.refund_item_line_item_amount as refund_items_amount,
+      a.refund_item_line_item_tax as refund_items_tax
+    from
+      ${ref("shopify_orders_return_items")} a
+    left join -- Assign compare_at_price
+      `rpg-dw-ingestion.refund_test.products_variants` b
+    on a.refund_item_line_item_variant_id = b.variant_id
+  )
+
+select
+  'items return' as trans_sales_line_type,
+  'return' as sale_kind,
+  'product' as sale_line_type,
+  main_brand,
+  brand,
+  region,
+  channel,
+  sub_channel,
+  location,
+  location_id,
+  store_name,
+  order_id,
+  source_name,
+  payment_gateway_names,
+  company,
+  order_name,
+  cancelled,
+  order_count,
+  fulfillment_status,
+  financial_status, 
+  customer_email, 
+  customer_first_name,
+  customer_last_name,
+  customer_id,
+  currency,
+  add_shipping_country, 
+  add_shipping_countrycode, 
+  add_shipping_city,
+  add_shipping_zip,
+  add_shipping_province, 
+  add_shipping_address1,
+  add_shipping_address2,
+  add_billing_country, 
+  add_billing_countrycode, 
+  tags, 
+  order_type,
+  order_type_1,
+  internal_staff_email, 
+  b2b_orders,
+
+  refund_item_id as line_items_id,
+  refund_item_line_item_variant_id as variant_id,
+  refund_item_line_item_gift_card as line_items_gift_card,
+  refund_item_line_item_main_sku as line_items_main_sku,
+  refund_item_line_item_name as line_items_name,
+  refund_item_line_item_title as line_items_title,
+  refund_item_line_item_fulfillment_status as line_items_fulfillment_status,
+  refund_item_line_item_grams as line_items_grams,
+
+  order_created_dt as created_dt,
+  order_created_at as created_at,
+  cancelled_dt,
+  closed_dt,
+  items_return_created_dt,
+  cast(null as date) as order_adjustment_created_dt,
+  cast(null as date) as shipping_refund_created_dt,
+  return_items_processed_dt as processed_dt,
+
+  null as line_item_price,
+  refund_item_line_item_quantity * -1 as line_item_quantity,
+  variant_compare_at_price,
+  null as trans_gross_sales_tax_inclusive,
+  null as item_tax_rate,
+  null as item_tax,
+  null as trans_gross_sales_tax,
+  null as trans_net_gross_sales,
+
+  cast(null as string) as discount_code,
+  null as discount_tax_inclusive,
+  null as trans_discount_tax,
+  null as trans_net_discount,
+  null as trans_discount_count,
+
+  null as total_shipping_price,
+  null as shipping_discount,
+  null as trans_shipping_discount_count,
+  null as shipping_tax,   
+  null as trans_net_shipping_before_return,
+  null as shipping_refund_amount_tax_exclusive,
+  null as shipping_refund_tax,
+  null as trans_net_shipping,
+
+  refund_items_amount as line_items_refund_tax_inclusive,
+  refund_items_tax as line_items_refund_tax,
+  -(coalesce(refund_items_amount,0) - coalesce(refund_items_tax,0)) as trans_net_line_items_refund,
+  null as adjustment_amount,
+  -(coalesce(refund_items_amount,0) - coalesce(refund_items_tax,0)) as trans_net_returns,
+
+  -(coalesce(refund_items_amount,0) - coalesce(refund_items_tax,0)) as trans_net_sales,
+  (refund_items_tax * -1) as trans_net_tax,
+  -(coalesce(refund_items_amount,0) - coalesce(refund_items_tax,0)) + (refund_items_tax * -1) as trans_total_sales,
+
+  exchange_rate_to_usd
+
+from
+  cte_base

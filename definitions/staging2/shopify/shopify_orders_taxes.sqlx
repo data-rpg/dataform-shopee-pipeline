@@ -1,0 +1,25 @@
+config {type: "table"}
+
+select
+  a.*,
+  tax_set,
+  cast(json_value(tax_set, '$.price') as numeric) as tax,
+  case
+    when cast(json_value(tax_set, '$.price') as numeric) = 0 then 0
+    else cast(json_value(tax_set, '$.rate') as numeric) 
+  end as tax_rate
+from
+(
+  select 
+    *,
+    JSON_VALUE(line_items_discount, '$.id') as tax_line_items_id,
+    JSON_VALUE(line_items_discount, '$.variant_id') as tax_line_items_variant_id,
+    JSON_VALUE(line_items_discount, '$.gift_card') as tax_gift_card,
+    JSON_EXTRACT_ARRAY(line_items_discount, '$.tax_lines') as tax_line
+  FROM 
+    ${ref("shopify_orders_union")}, unnest(json_extract_array(line_items)) as line_items_discount
+) a, unnest(tax_line) as tax_set
+
+
+
+

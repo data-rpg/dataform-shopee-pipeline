@@ -1,0 +1,23 @@
+config {type: "table"}
+
+SELECT
+    'BL' as main_brand, 
+    'BLMY' as brand,
+    'MY' as region,
+    case
+      when location_id in (67489693850, 67535995034) then 'offline'
+      else 'online'
+    end as channel,
+    case
+      when location_id in (67489693850, 67535995034) then 'pos'
+      else 'shopify'
+    end as sub_channel,
+    case
+      when location_id = 67489693850 then 'Isetan - The Garden'
+      when location_id = 67535995034 then 'Metrojaya Mid Valley'
+      else 'online'
+    end as location,
+    'RPGC' as company,
+    * except(company)
+FROM
+  ${ref("blmy_orders")}

@@ -1,0 +1,42 @@
+config {type: "table"}
+
+SELECT 
+  * except(processed_at, processed_dt, created_at, created_dt, adjusted_created_at, adjusted_created_dt),
+  JSON_VALUE(refund, '$.id') as refund_id,
+  created_at as order_created_at,
+  created_dt as order_created_dt,
+  adjusted_created_at as adjusted_order_created_at,
+  adjusted_created_dt as adjusted_order_created_dt, 
+
+  processed_at as order_processed_at,
+  processed_dt as order_processed_dt,
+
+  datetime(timestamp(JSON_VALUE(refund, '$.created_at'))) as created_at,
+  format_datetime("%F", datetime(timestamp(JSON_VALUE(refund, '$.created_at')))) as created_dt,
+  datetime(left(JSON_VALUE(refund, '$.created_at'), 19)) as adjusted_created_at,
+  date(left(JSON_VALUE(refund, '$.created_at'), 10)) as adjusted_created_dt, 
+
+  datetime(left(JSON_VALUE(refund, '$.processed_at'), 19)) as processed_at,
+  date(left(JSON_VALUE(refund, '$.processed_at'), 10)) as processed_dt, 
+
+  JSON_VALUE(refund_line_item, '$.id') as refund_item_id,
+  JSON_VALUE(refund_line_item, '$.line_item_id') as refund_item_line_item_id,
+  JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.variant_id') as refund_item_line_item_variant_id,
+  JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.gift_card') as refund_item_line_item_gift_card,
+  JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.sku') as refund_item_line_item_main_sku,
+  JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.name') as refund_item_line_item_name,
+  JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.title') as refund_item_line_item_title,
+  JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.fulfillment_status') as refund_item_line_item_fulfillment_status,
+  cast(JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.grams') as numeric) as refund_item_line_item_grams,
+  cast(JSON_VALUE(JSON_EXTRACT(refund_line_item, '$.line_item'), '$.quantity') as numeric) as refund_item_line_item_order_quantity,
+  cast(JSON_VALUE(refund_line_item, '$.quantity') as numeric) as refund_item_line_item_quantity,
+  cast(JSON_VALUE(refund_line_item, '$.subtotal') as numeric) as refund_item_line_item_amount,
+  cast(JSON_VALUE(refund_line_item, '$.total_tax') as numeric) as refund_item_line_item_tax,
+  JSON_VALUE(refund_line_item, '$.restock_type') as refund_item_line_item_restock_type
+from
+  (
+    select * from ${ref("shopify_orders_union")}, unnest(json_extract_array(refunds)) as refund
+  ), unnest(JSON_EXTRACT_ARRAY(refund, '$.refund_line_items')) as refund_line_item
+
+
+

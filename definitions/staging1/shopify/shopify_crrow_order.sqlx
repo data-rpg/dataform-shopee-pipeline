@@ -1,0 +1,13 @@
+config {type: "table"}
+
+SELECT
+    'CR' as main_brand, 
+    'CRRW' as brand,
+    'RW' as region,
+    'online' as channel,
+    'shopify' as sub_channel,
+    'online' as location,
+    'RPGV' as company,
+    * except(company)
+FROM
+  ${ref("crrow_orders")}
