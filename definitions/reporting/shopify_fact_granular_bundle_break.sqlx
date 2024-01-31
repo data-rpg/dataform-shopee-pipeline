@@ -125,4 +125,4 @@ from
     ${ref("shopify_fact_granular")} a
 left join
     ${ref("sku_master_clean")} b
-on a.line_items_main_sku = b.bundle_sku
+on trim(upper(a.line_items_main_sku)) = trim(upper(b.bundle_sku))

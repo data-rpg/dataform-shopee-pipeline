@@ -19,8 +19,13 @@ select
     end as internal_staff_email,
     case 
       when 
-        tags like "Sponsorship/Collaboration" or tags like "Consignment" or tags like "Wholesale" or tags like "B2B Sampling" or 
-        tags like "Corporate Order (Customiser)" or tags like "B2B Events" then 'yes' or shop_url = 'bd-consignment'
+        (tags like "%Sponsorship/Collaboration%" 
+         or tags like "%Consignment%" 
+         or tags like "%Wholesale%" 
+         or tags like "%B2B Sampling%" 
+         or tags like "%Corporate Order (Customiser)%" 
+         or tags like "%B2B Events%" 
+         or shop_url = 'bd-consignment') then 'yes' 
         else 'no'
     end as b2b_orders,
     regexp_extract(tags,r'L2\-([^\,]*)') as order_type,
@@ -185,4 +190,3 @@ FROM
     union all
     select * from ${ref("shopify_tmus_order")}    
   )
-  

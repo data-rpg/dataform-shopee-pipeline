@@ -72,7 +72,7 @@ FROM
   
 left join
   (select distinct bundle_sku, brand from ${ref("sku_master_unique")}) b
-on a.line_items_main_sku = b.bundle_sku
+on trim(upper(a.line_items_main_sku)) = trim(upper(b.bundle_sku))
 
 
 
