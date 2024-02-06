@@ -1,0 +1,21 @@
+config {type: "table"}
+
+select
+    order_id,
+    case
+    when min(coalesce(order_adjustment_created_dt, '3000-01-01')) = '3000-01-01' then null
+    else min(coalesce(order_adjustment_created_dt, '3000-01-01'))
+    end as min_order_adjustment_created_dt,
+    sum(adjustment_amount) as adjustment_amount,
+    sum(trans_net_sales) as trans_net_sales,
+    sum(trans_total_sales) as trans_total_sales,
+    sum(adjustment_amount_usd) as adjustment_amount_usd,
+    sum(trans_net_sales_usd) as trans_net_sales_usd,
+    sum(trans_net_tax_usd) as trans_net_tax_usd,
+    sum(trans_total_sales_usd) as trans_total_sales_usd
+from
+    ${ref("shopify_fact_granular")}
+where
+    trans_sales_line_type = 'order adjustment'
+group by
+    1

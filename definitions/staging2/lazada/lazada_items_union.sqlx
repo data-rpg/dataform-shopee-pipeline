@@ -62,7 +62,8 @@ SELECT
     json_extract_scalar(items, '$.priority_fulfillment_tag') as priority_fulfillment_tag,
     json_extract_scalar(items, '$.voucher_amount') as voucher_amount,
     json_extract_scalar(items, '$.digital_delivery_info') as digital_delivery_info,
-    json_extract_scalar(items, '$.extra_attributes') as extra_attributes
+    json_extract_scalar(items, '$.extra_attributes') as extra_attributes,
+    1 as order_item_quantity
 FROM
   (
     select * from ${ref("lazada_blmy_item")}

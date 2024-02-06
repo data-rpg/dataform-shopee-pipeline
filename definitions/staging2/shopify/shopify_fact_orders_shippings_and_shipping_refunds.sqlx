@@ -1,0 +1,29 @@
+config {type: "table"}
+
+select
+  order_id,  
+  case
+    when min(coalesce(shipping_refund_created_dt, '3000-01-01')) = '3000-01-01' then null
+    else min(coalesce(shipping_refund_created_dt, '3000-01-01'))
+  end as min_shipping_refund_created_dt,    
+  sum(total_shipping_price) as total_shipping_price,
+  sum(shipping_discount) as shipping_discount,
+  sum(shipping_tax) as shipping_tax,
+  sum(trans_net_shipping_before_return) as trans_net_shipping_before_return,
+  sum(shipping_refund_amount_tax_exclusive) as shipping_refund_amount_tax_exclusive,
+  sum(shipping_refund_tax) as shipping_refund_tax,
+  sum(trans_net_shipping) as trans_net_shipping,
+  sum(trans_net_sales) as trans_net_sales,
+  sum(trans_total_sales) as trans_total_sales,
+  sum(trans_net_shipping_usd) as trans_net_shipping_usd,
+  sum(trans_net_sales_usd) as trans_net_sales_usd,
+  sum(shipping_tax_usd) as shipping_tax_usd,
+  sum(shipping_refund_tax_usd) as shipping_refund_tax_usd,
+  sum(trans_total_sales_usd) as trans_total_sales_usd
+from
+  ${ref("shopify_fact_granular")}
+where
+  trans_sales_line_type in ('shipping', 'shipping refund')
+group by
+  1  
+

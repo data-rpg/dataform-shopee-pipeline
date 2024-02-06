@@ -1,0 +1,45 @@
+config {type: "table"}
+
+select
+    main_brand,
+    brand,
+    region,
+    currency,
+    order_no,
+    sum(orders_sales_item_price_credit) as orders_sales_item_price_credit,
+    sum(orders_sales_other) as orders_sales_other,
+    sum(orders_logistics_shipping_fee_paid_by_seller) as orders_logistics_shipping_fee_paid_by_seller,
+    sum(orders_logistics_shipping_fee__paid_by_customer) as orders_logistics_shipping_fee__paid_by_customer,
+    sum(orders_logistics_shipping_fee_voucher__by_lazada) as orders_logistics_shipping_fee_voucher__by_lazada,
+    sum(orders_logistics_other) as orders_logistics_other,
+    sum(orders_logistics_shipping_fee_subsidy__by_seller) as orders_logistics_shipping_fee_subsidy__by_seller,
+    sum(orders_marketing_fees_promotional_charges_vouchers) as orders_marketing_fees_promotional_charges_vouchers,
+    sum(orders_marketing_fees_free_shipping_max_fee) as orders_marketing_fees_free_shipping_max_fee,
+    sum(orders_marketing_fees_lcp_fee) as orders_marketing_fees_lcp_fee,
+    sum(orders_marketing_fees_promotional_charges_flexi_combo) as orders_marketing_fees_promotional_charges_flexi_combo,
+    sum(orders_marketing_fees_lazcoin_discount) as orders_marketing_fees_lazcoin_discount,
+    sum(orders_marketing_fees_other) as orders_marketing_fees_other,
+    sum(orders_lazada_fees_payment_fee) as orders_lazada_fees_payment_fee,
+    sum(orders_lazada_fees_commission) as orders_lazada_fees_commission,
+    sum(orders_lazada_fees_lazada_bonus) as orders_lazada_fees_lazada_bonus,
+    sum(orders_lazada_fees_lazada_bonus___lzd_co_fund) as orders_lazada_fees_lazada_bonus___lzd_co_fund,
+    sum(orders_lazada_fees_other) as orders_lazada_fees_other,
+    sum(orders_claims_other) as orders_claims_other,
+    sum(other_services_marketing_fees_sponsored_affiliates) as other_services_marketing_fees_sponsored_affiliates,
+    sum(other_services_marketing_fees_other) as other_services_marketing_fees_other,
+    sum(refunds_sales_refund) as refunds_sales_refund,
+    sum(refunds_logistics_refund) as refunds_logistics_refund,
+    sum(refunds_marketing_fees_refund) as refunds_marketing_fees_refund,
+    sum(refunds_lazada_fees_refund) as refunds_lazada_fees_refund,
+    sum(refunds_claims_refund) as refunds_claims_refund,
+    sum(trans_total_orders_sales) as trans_total_orders_sales,
+    sum(trans_total_orders_logistics) as trans_total_orders_logistics,
+    sum(trans_total_orders_marketing_fee) as trans_total_orders_marketing_fee,
+    sum(trans_total_orders_lazada_fees) as trans_total_orders_lazada_fees,
+    sum(trans_total_other_services_marketing_fees) as trans_total_other_services_marketing_fees,
+    sum(trans_total_refunds) as trans_total_refunds,
+    sum(trans_transaction_amount) as trans_transaction_amount
+from 
+    ${ref("lazada_transactions_pivot_trans")}
+group by
+    1,2,3,4,5

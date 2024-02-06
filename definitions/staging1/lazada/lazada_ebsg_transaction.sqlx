@@ -3,6 +3,8 @@ config {type: "table"}
 SELECT
     'EB' as main_brand, 
     'EBSG-Lazada' as brand,
+    'SG' as region,
+    'SGD' as currency,
     order_no,
     transaction_date,
     amount,
