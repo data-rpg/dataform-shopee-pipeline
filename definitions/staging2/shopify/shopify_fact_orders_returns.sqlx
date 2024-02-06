@@ -1,0 +1,24 @@
+config {type: "table"}
+
+select
+    main_brand,
+    order_id,
+    case
+    when min(coalesce(items_return_created_dt, '3000-01-01')) = '3000-01-01' then null
+    else min(coalesce(items_return_created_dt, '3000-01-01'))
+    end as min_items_return_created_dt,
+    sum(line_items_refund_tax_inclusive) as line_items_refund_tax_inclusive,
+    sum(line_items_refund_tax) as line_items_refund_tax,
+    sum(trans_net_line_items_refund) as trans_net_line_items_refund,
+    sum(trans_net_sales) as trans_net_sales,
+    sum(trans_total_sales) as trans_total_sales,
+    sum(trans_net_line_items_refund_usd) as trans_net_line_items_refund_usd,
+    sum(trans_net_sales_usd) as trans_net_sales_usd,
+    sum(line_items_refund_tax_usd) as line_items_refund_tax_usd,
+    sum(trans_total_sales_usd) as trans_total_sales_usd
+from
+    ${ref("shopify_fact_granular")}
+where
+    trans_sales_line_type = 'items return'
+group by
+    1,2

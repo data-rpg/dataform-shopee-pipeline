@@ -46,7 +46,7 @@ with
       store_name,
       order_id,
       source_name,
-      payment_gateway_names,
+      TO_JSON_STRING(payment_gateway_names) as payment_gateway_names,
       company,
       order_name,
       cancelled,

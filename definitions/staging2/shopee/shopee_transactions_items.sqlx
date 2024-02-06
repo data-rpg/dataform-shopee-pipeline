@@ -3,6 +3,7 @@ config {type: "table"}
 select  
     a.main_brand,
     a.brand,
+    a.region,
     a.buyer_user_name,
     a.order_sn,
     a.return_order_sn_list,

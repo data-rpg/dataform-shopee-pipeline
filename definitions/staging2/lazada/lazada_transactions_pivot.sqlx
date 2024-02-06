@@ -5,6 +5,8 @@ select * from
     select
         main_brand,
         brand, 
+        region,
+        currency,
         order_no, 
         orderItem_no,
         seller_sku,

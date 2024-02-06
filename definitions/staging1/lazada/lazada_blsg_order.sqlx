@@ -3,6 +3,8 @@ config {type: "table"}
 SELECT
     'BL' as main_brand, 
     'BLSG-Lazada' as brand,
+    'SG' as region,
+    'SGD' as currency,
     *
 FROM
   ${ref("lazada_order_details_blsg")}

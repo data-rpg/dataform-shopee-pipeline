@@ -21,3 +21,5 @@ SELECT
     * except(company)
 FROM
   ${ref("lmevents_orders")}
+
+  

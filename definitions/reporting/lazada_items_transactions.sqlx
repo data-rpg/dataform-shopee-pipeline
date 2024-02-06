@@ -2,7 +2,7 @@ config {type: "table"}
 
 select 
     a.*,
-    b.* except (main_brand, brand, order_no, orderItem_no, seller_sku) 
+    b.* except (main_brand, brand, region, currency, order_no, orderItem_no, seller_sku) 
 from 
     ${ref("lazada_items_union")} a
 left join

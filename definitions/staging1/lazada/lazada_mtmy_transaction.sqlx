@@ -3,6 +3,8 @@ config {type: "table"}
 SELECT
     'MT' as main_brand, 
     'MTMY-Lazada' as brand,
+    'MY' as region,
+    'MYR' as currency,
     order_no,
     transaction_date,
     amount,
