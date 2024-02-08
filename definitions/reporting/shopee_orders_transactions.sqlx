@@ -2,9 +2,13 @@ config {type: "table"}
 
 select  
   a.*,
-  b.* except(main_brand, order_sn, brand)
+  b.* except(main_brand, order_sn, brand),
+  c.items_quantity
 FROM
   ${ref("shopee_orders_union")} a
 left join
   ${ref("shopee_transactions_union")} b
 on a.order_sn = b.order_sn and a.brand = b.brand
+left join
+  (select order_sn, sum(cast(model_quantity_purchased as numeric)) as items_quantity from ${ref("shopee_orders_items")} group by 1) c
+on a.order_sn = c.order_sn
