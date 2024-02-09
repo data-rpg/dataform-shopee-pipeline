@@ -17,7 +17,7 @@ select
   customer_first_name,
   customer_last_name,
   customer_id,
-  TO_JSON_STRING(payment_gateway_names) as payment_gateway_names,
+  payment_gateway_names,
   currency,
   add_shipping_country,
   add_shipping_countrycode,
