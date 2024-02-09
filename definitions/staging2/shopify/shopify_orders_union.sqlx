@@ -65,6 +65,8 @@ select
       when tags like '%Shopee%' then 'Shopee'
       when tags like '%TikTok%' then 'TikTok' 
     end as order_type_1,
+    (payment_gateway_names) as payment_gateway_names,
+
     case
           when currency = 'USD' then 1
           when currency = 'MYR' then 0.2238
@@ -127,7 +129,7 @@ select
   datetime(left(processed_at, 19)) as processed_at,
   date(left(processed_at, 10)) as processed_dt,
 
-  * except(cancelled_at, created_at, processed_at, closed_at)
+  * except(cancelled_at, created_at, processed_at, closed_at, payment_gateway_names)
 
     
 FROM

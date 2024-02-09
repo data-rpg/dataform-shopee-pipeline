@@ -3,7 +3,8 @@ config {type: "table"}
 with  
   cte_base as (
     select 
-      a.* except(order_created_at, order_created_dt, cancelled_dt, closed_dt, processed_dt, adjusted_created_dt, adjusted_order_created_dt, adjusted_order_created_at, adjusted_cancelled_dt, adjusted_closed_dt, refund_item_line_item_amount, refund_item_line_item_tax),
+      a.* except(order_created_at, order_created_dt, cancelled_dt, closed_dt, processed_at, processed_dt, adjusted_created_dt, adjusted_order_created_dt, adjusted_order_created_at, adjusted_cancelled_dt, adjusted_closed_dt, refund_item_line_item_amount, refund_item_line_item_tax),
+      a.processed_at as return_items_processed_at,
       a.processed_dt as return_items_processed_dt,
       a.adjusted_created_dt as items_return_created_dt,
       a.adjusted_order_created_dt as order_created_dt,
@@ -77,6 +78,7 @@ select
   items_return_created_dt,
   cast(null as date) as order_adjustment_created_dt,
   cast(null as date) as shipping_refund_created_dt,
+  return_items_processed_at as processed_at,
   return_items_processed_dt as processed_dt,
 
   null as line_item_price,

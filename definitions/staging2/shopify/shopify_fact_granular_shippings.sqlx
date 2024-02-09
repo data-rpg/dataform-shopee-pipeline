@@ -6,7 +6,8 @@ with
         'shipping' as trans_sales_line_type,
         'order' as sale_kind,
         'shipping' as sale_line_type,
-        a.* except(created_at, created_dt, cancelled_dt, closed_dt, processed_dt, adjusted_created_dt, adjusted_created_at, adjusted_cancelled_dt, adjusted_closed_dt, shipping_price, shipping_tax),
+        a.* except(created_at, created_dt, cancelled_dt, closed_dt, processed_at, processed_dt, adjusted_created_dt, adjusted_created_at, adjusted_cancelled_dt, adjusted_closed_dt, shipping_price, shipping_tax),
+        a.processed_at as shipping_processed_at,
         a.processed_dt as shipping_processed_dt,
         a.adjusted_created_dt as created_dt,
         a.adjusted_created_at as created_at,
@@ -89,6 +90,7 @@ with
       cast(null as date) as items_return_created_dt,
       cast(null as date) as order_adjustment_created_dt,
       cast(null as date) as shipping_refund_created_dt,
+      shipping_processed_dt as processed_at,
       shipping_processed_dt as processed_dt,
 
       null as line_item_price,
