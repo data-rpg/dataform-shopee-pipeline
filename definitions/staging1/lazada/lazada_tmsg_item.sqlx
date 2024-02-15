@@ -4,7 +4,6 @@ SELECT
     'TM' as main_brand, 
     'TMSG-Lazada' as brand,
     'SG' as region,
-    'SGD' as currency,
     *
 FROM
   ${ref("lazada_item_details_tmsg")}
