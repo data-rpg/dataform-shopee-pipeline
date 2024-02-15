@@ -4,7 +4,6 @@ SELECT
     'CC' as main_brand, 
     'CCMY-Lazada' as brand,
     'MY' as region,
-    'MYR' as currency,
     *
 FROM
   ${ref("lazada_item_details_ccmy")}

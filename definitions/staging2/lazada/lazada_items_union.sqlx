@@ -3,6 +3,10 @@ config {type: "table"}
 SELECT    
     * except(items),
     items as order_items_json,
+    case
+      when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
+      when REGEXP_CONTAINS(brand, r"SG") = true then 0.7831
+    end as exchange_rate_to_usd,
     json_extract_scalar(items, '$.tax_amount') as tax_amount,
     json_extract_scalar(items, '$.pick_up_store_info') as pick_up_store_info,
     json_extract_scalar(items, '$.reason') as reason,
