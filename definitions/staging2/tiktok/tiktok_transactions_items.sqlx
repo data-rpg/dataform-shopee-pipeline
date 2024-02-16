@@ -1,0 +1,17 @@
+config {type: "table"}
+
+select  
+  a.*,
+  payment as payment_json,
+  JSON_EXTRACT_SCALAR(payment, '$.original_shipping_fee') as original_shipping_fee,
+  JSON_EXTRACT_SCALAR(payment, '$.original_total_product_price') as original_total_product_price,
+  JSON_EXTRACT_SCALAR(payment, '$.platform_discount') as payment_platform_discount,
+  JSON_EXTRACT_SCALAR(payment, '$.seller_discount') as payment_seller_discount,
+  JSON_EXTRACT_SCALAR(payment, '$.shipping_fee') as shipping_fee,
+  JSON_EXTRACT_SCALAR(payment, '$.shipping_fee_platform_discount') as shipping_fee_platform_discount,
+  JSON_EXTRACT_SCALAR(payment, '$.shipping_fee_seller_discount') as shipping_fee_seller_discount,
+  JSON_EXTRACT_SCALAR(payment, '$.sub_total') as sub_total,
+  JSON_EXTRACT_SCALAR(payment, '$.tax') as tax,
+  JSON_EXTRACT_SCALAR(payment, '$.total_amount') as total_amount
+FROM
+  ${ref("tiktok_orders_union")} a

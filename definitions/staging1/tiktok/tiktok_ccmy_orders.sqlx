@@ -1,0 +1,11 @@
+config {type: "table"}
+
+SELECT
+    'CC' as main_brand, 
+    'CCMY-Tiktok' as brand,
+    'MY' as region,
+    'MYR' as currency,
+    *, 
+    'nan' as seller_note
+FROM
+  ${ref("tiktok_orders_list_ccmy")}

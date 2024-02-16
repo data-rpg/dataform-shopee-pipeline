@@ -1,0 +1,19 @@
+config {type: "table"}
+
+SELECT
+    * ,
+    ${mapping.convert_to_local('create_time')} AS created_at,
+    ${mapping.convert_to_local('update_time')} AS updated_at,
+    ${mapping.convert_to_local('cancel_time')} AS cancelled_at,
+    ${mapping.convert_to_local('paid_time')} AS paid_at,
+    ROW_NUMBER() OVER(PARTITION BY (user_id) ORDER BY create_time) as order_count,
+    case
+          when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
+          when REGEXP_CONTAINS(brand, r"SG") = true then 0.7831
+    end as exchange_rate_to_usd,
+FROM
+  (
+    select * from ${ref("tiktok_ccmy_orders")}
+    union all
+    select * from ${ref("tiktok_mtmy_orders")}
+  )
