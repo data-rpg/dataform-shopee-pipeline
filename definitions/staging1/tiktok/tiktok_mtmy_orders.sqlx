@@ -1,0 +1,11 @@
+config {type: "table"}
+
+SELECT
+    'MT' as main_brand, 
+    'MTMY-Tiktok' as brand,
+    'MY' as region,
+    'MYR' as currency,
+    * except(seller_note),
+    seller_note
+FROM
+  ${ref("tiktok_orders_list_mtmy")}

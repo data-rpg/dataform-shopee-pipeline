@@ -1,0 +1,29 @@
+config {type: "table"}
+
+select  
+  a.*,
+  b as line_item_json,
+  JSON_EXTRACT_SCALAR(b, '$.currency') as currencys,
+  JSON_EXTRACT_SCALAR(b, '$.display_status') as display_status,
+  JSON_EXTRACT_SCALAR(b, '$.id') as ids,
+  JSON_EXTRACT_SCALAR(b, '$.is_gift') as is_gift,
+  JSON_EXTRACT_SCALAR(b, '$.original_price') as original_price,
+  JSON_EXTRACT_SCALAR(b, '$.package_id') as package_id,
+  JSON_EXTRACT_SCALAR(b, '$.package_status') as package_status,
+  JSON_EXTRACT_SCALAR(b, '$.platform_discount') as platform_discount,
+  JSON_EXTRACT_SCALAR(b, '$.product_id') as product_id,
+  JSON_EXTRACT_SCALAR(b, '$.product_name') as product_name,
+  JSON_EXTRACT_SCALAR(b, '$.rts_time') as rts_times,
+  JSON_EXTRACT_SCALAR(b, '$.sale_price') as sale_price,
+  JSON_EXTRACT_SCALAR(b, '$.seller_discount') as seller_discount,
+  JSON_EXTRACT_SCALAR(b, '$.seller_sku') as seller_sku,
+  JSON_EXTRACT_SCALAR(b, '$.shipping_provider_id') as shipping_provider_ids,
+  JSON_EXTRACT_SCALAR(b, '$.shipping_provider_name') as shipping_provider_name,
+  JSON_EXTRACT_SCALAR(b, '$.sku_id') as sku_id,
+  JSON_EXTRACT_SCALAR(b, '$.sku_image') as sku_image,
+  JSON_EXTRACT_SCALAR(b, '$.sku_name') as sku_name,
+  JSON_EXTRACT_SCALAR(b, '$.sku_type') as sku_type,
+  JSON_EXTRACT_SCALAR(b, '$.tracking_number') as tracking_numbers,
+FROM
+  ${ref("tiktok_orders_union")} a,
+  unnest(json_extract_array(${mapping.string_array_to_json('line_items')})) b

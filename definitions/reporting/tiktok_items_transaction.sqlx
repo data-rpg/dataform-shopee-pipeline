@@ -1,0 +1,6 @@
+config {type: "table"}
+
+select  
+  *
+FROM
+  ${ref("tiktok_orders_item")} 
