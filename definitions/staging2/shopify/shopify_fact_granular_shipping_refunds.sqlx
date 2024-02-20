@@ -112,7 +112,7 @@ select
   null as adjustment_amount,
   null as trans_net_returns,
 
-  shipping_refund_amount_tax_exclusive as trans_net_sales,
+  null as trans_net_sales,
   shipping_refund_tax as trans_net_tax,
   shipping_refund_amount_tax_exclusive + shipping_refund_tax as trans_total_sales,
 
