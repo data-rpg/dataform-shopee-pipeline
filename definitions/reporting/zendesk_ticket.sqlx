@@ -64,7 +64,7 @@ SELECT
   sr.score AS satisfaction_score,
   br.name AS brand,
   ag.name AS agent_name,
-  ct.time_zone AS Country,
+  ct.time_zone AS country,
   REPLACE(JSON_EXTRACT(TO_JSON_STRING(tc.fields), '$[4].value'), '"', '') AS order_number,
   JSON_EXTRACT(tc.fields, '$[0].value') AS order_created_date,
   TIMESTAMP_DIFF(ta2.created_at, ta1.created_at, MINUTE) AS first_response_time,

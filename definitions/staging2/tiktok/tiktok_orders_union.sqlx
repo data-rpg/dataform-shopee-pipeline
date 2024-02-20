@@ -6,6 +6,7 @@ SELECT
     ${mapping.convert_to_local('update_time')} AS updated_at,
     ${mapping.convert_to_local('cancel_time')} AS cancelled_at,
     ${mapping.convert_to_local('paid_time')} AS paid_at,
+    DATE(${mapping.convert_to_local('create_time')}) AS created_dt,
     ROW_NUMBER() OVER(PARTITION BY (user_id) ORDER BY create_time) as order_count,
     case
           when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
