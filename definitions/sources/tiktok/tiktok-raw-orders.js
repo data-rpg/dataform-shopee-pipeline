@@ -9,3 +9,9 @@ declare({
     schema: "testing",
     name: "tiktok_orders_list_mtmy",
 });
+
+declare({
+    database: "rpg-dw",
+    schema: "testing",
+    name: "tiktok_orders_list_mtsg",
+});

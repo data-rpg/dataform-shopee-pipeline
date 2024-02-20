@@ -1,0 +1,117 @@
+config {type: "table"}
+WITH agent_audits_with_ranks AS (
+  SELECT
+    ticket_id,
+    created_at,
+    author_id,
+    ROW_NUMBER() OVER (PARTITION BY ticket_id ORDER BY created_at) AS row_num
+  FROM
+    ${ref("ticket_audits")}
+  WHERE
+    author_id IN (SELECT id FROM `rpg-dw-ingestion.zendesk_support.users` WHERE role IN ('agent', 'admin'))
+),
+
+end_user_audits_with_ranks AS (
+  SELECT
+    ticket_id,
+    created_at,
+    author_id,
+    ROW_NUMBER() OVER (PARTITION BY ticket_id ORDER BY created_at) AS row_num
+  FROM
+    ${ref("ticket_audits")}
+  WHERE
+    author_id IN (SELECT id FROM `rpg-dw-ingestion.zendesk_support.users` WHERE role = 'end-user')
+)
+
+SELECT
+  tm._airbyte_raw_id,
+  tm._airbyte_extracted_at,
+  tm.group_stations,
+  tm.created_at,
+  tm.assignee_stations,
+  tm.type,
+  tm.initially_assigned_at,
+  tm.updated_at,
+  tm.assigned_at,
+  tm.status_updated_at,
+  tm.id,
+  tm.ticket_id,
+  tm.reopens,
+  tm.requester_updated_at,
+  tm.custom_status_updated_at,
+  tm.url,
+  tm.instance_id,
+  tm.replies,
+  tm.latest_comment_added_at,
+  tm.metric,
+  tm.solved_at,
+  tm.time,
+  tm.status,
+  tm.assignee_updated_at,
+  JSON_EXTRACT(tm._airbyte_meta, '$.errors') AS airbyte_errors,
+  CAST(JSON_EXTRACT_SCALAR(tm.on_hold_time_in_minutes, '$.business') AS INT64) AS on_hold_business,
+  CAST(JSON_EXTRACT_SCALAR(tm.on_hold_time_in_minutes, '$.calendar') AS INT64) AS on_hold_calendar,
+  CAST(JSON_EXTRACT_SCALAR(tm.reply_time_in_minutes, '$.business') AS INT64) AS reply_business,
+  CAST(JSON_EXTRACT_SCALAR(tm.reply_time_in_minutes, '$.calendar') AS INT64) AS reply_calendar,
+  CAST(JSON_EXTRACT_SCALAR(tm.agent_wait_time_in_minutes, '$.business') AS INT64) AS agent_wait_business,
+  CAST(JSON_EXTRACT_SCALAR(tm.agent_wait_time_in_minutes, '$.calendar') AS INT64) AS agent_wait_calendar,
+  CAST(JSON_EXTRACT_SCALAR(tm.full_resolution_time_in_minutes, '$.business') AS INT64) AS full_resolution_business,
+  CAST(JSON_EXTRACT_SCALAR(tm.full_resolution_time_in_minutes, '$.calendar') AS INT64) AS full_resolution_calendar,
+  CAST(JSON_EXTRACT_SCALAR(tm.requester_wait_time_in_minutes, '$.business') AS INT64) AS requester_wait_business,
+  CAST(JSON_EXTRACT_SCALAR(tm.requester_wait_time_in_minutes, '$.calendar') AS INT64) AS requester_wait_calendar,
+  CAST(JSON_EXTRACT_SCALAR(tm.first_resolution_time_in_minutes, '$.business') AS INT64) AS first_resolution_business,
+  CAST(JSON_EXTRACT_SCALAR(tm.first_resolution_time_in_minutes, '$.calendar') AS INT64) AS first_resolution_calendar,
+  sr.score AS satisfaction_score,
+  br.name AS brand,
+  ag.name AS agent_name,
+  ct.time_zone AS Country,
+  REPLACE(JSON_EXTRACT(TO_JSON_STRING(tc.fields), '$[4].value'), '"', '') AS order_number,
+  JSON_EXTRACT(tc.fields, '$[0].value') AS order_created_date,
+  TIMESTAMP_DIFF(ta2.created_at, ta1.created_at, MINUTE) AS first_response_time,
+  (SELECT COUNT(*) FROM `rpg-dw-ingestion.zendesk_support.ticket_audits` ta
+   JOIN `rpg-dw-ingestion.zendesk_support.users` u ON ta.author_id = u.id
+   WHERE ta.ticket_id = tm.ticket_id AND u.role = 'end-user') AS user_responses,
+  (SELECT COUNT(*) FROM `rpg-dw-ingestion.zendesk_support.ticket_audits` ta
+   JOIN `rpg-dw-ingestion.zendesk_support.users` u ON ta.author_id = u.id
+   WHERE ta.ticket_id = tm.ticket_id AND u.role IN ('agent', 'admin')) AS agent_responses,
+  (SELECT
+    MAX(country_origin)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(au|my|sg|us|uae|uk|row)"')) AS country_origin
+  ) AS country_origin,
+  (SELECT
+    MAX(brand_group)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(mt_global|tm_global|tm_regional|bl_global|mt_regional|mt_uae|cc_uae|cc_regional|eubi|bl_regional|cc_global)"')) AS brand_group
+  ) AS brand_group,
+  (SELECT
+    MAX(ticket_type)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(after-sale_enquiry|pre-sale_enquiry|feedback|return_request|complaint|miscellaneous)"')) AS ticket_type
+  ) AS ticket_type,
+  (SELECT
+    MAX(warehouse)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(black_bear_au|dmc_au|ecc_eu|ewe|snt_sg|shipdepot_us|shorages_uae|snt_my|ych_sg|no_warehouse|locad_sg|locad_au)"')) AS warehouse
+  ) AS warehouse,
+  (SELECT
+    MAX(type_of_contact)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(inbound|outbound|internal_shopee|internal_lazada|internal_tiktok|messenger|facebook_comment|instagram_direct|instagram_comment|web_chat|whatsapp)"')) AS type_of_contact
+  ) AS type_of_contact,
+  (SELECT
+    MAX(order_origin)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(online_sales|offline_sales|marketplace_sales|not_sales_related)"')) AS order_origin
+  ) AS order_origin,
+  (SELECT
+    MAX(primary_reason_code)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(ambassador|amend_order|bulk_order_request|cancellation|defects|did_not_receive__dnr_|dispute|exchange|fulfilment_error|manifest_error|misc|oos|product_info|promotion|refund|return_exchange_policy|return_to_sender__rts_|shipping_custom|unfulfilled|warranty_request|wismo)"')) AS primary_reason_code
+  ) AS primary_reason_code,
+  (SELECT
+    MAX(ticket_resolution)
+   FROM UNNEST(REGEXP_EXTRACT_ALL(CAST(TO_JSON_STRING(JSON_EXTRACT(tc.tags, '$')) AS STRING), r'"(issued_full_refund|issued_partial_refund|sent_replacement|exchanged_item|processed_amendment|resolved|no_resolution_yet)"')) AS ticket_resolution
+  ) AS ticket_resolution,
+
+FROM ${ref("ticket_metrics")} tm
+LEFT JOIN ${ref("satisfaction_ratings")} sr ON tm.ticket_id = sr.ticket_id
+LEFT JOIN ${ref("tickets")} tc ON tm.ticket_id = tc.id
+LEFT JOIN ${ref("brands")} br ON tc.brand_id = br.id
+LEFT JOIN ${ref("users")} ag ON tc.assignee_id = ag.id
+LEFT JOIN ${ref("users")} ct ON tc.assignee_id = ct.id
+LEFT JOIN end_user_audits_with_ranks ta1 ON tm.ticket_id = ta1.ticket_id AND ta1.row_num = 1
+LEFT JOIN agent_audits_with_ranks ta2 ON tm.ticket_id = ta2.ticket_id AND ta2.row_num = 1

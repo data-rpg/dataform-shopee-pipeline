@@ -16,4 +16,6 @@ FROM
     select * from ${ref("tiktok_ccmy_orders")}
     union all
     select * from ${ref("tiktok_mtmy_orders")}
+    union all
+    select * from ${ref("tiktok_mtsg_orders")}
   )
