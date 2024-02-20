@@ -2,16 +2,21 @@ config {type: "table"}
 
 select  
   a.*,
+  JSON_EXTRACT_SCALAR(recipient_address, '$.full_address') as address_detail,
+  JSON_EXTRACT_SCALAR(recipient_address, '$.name') as customer_full_name,
+  JSON_EXTRACT_SCALAR(recipient_address, '$.phone_number') as address_phone_number,
+  JSON_EXTRACT_SCALAR(recipient_address, '$.postal_code') as address_postal_code,
+  JSON_EXTRACT_SCALAR(recipient_address, '$.region_code') as address_country,
   payment as payment_json,
-  JSON_EXTRACT_SCALAR(payment, '$.original_shipping_fee') as original_shipping_fee,
-  JSON_EXTRACT_SCALAR(payment, '$.original_total_product_price') as original_total_product_price,
-  JSON_EXTRACT_SCALAR(payment, '$.platform_discount') as payment_platform_discount,
-  JSON_EXTRACT_SCALAR(payment, '$.seller_discount') as payment_seller_discount,
-  JSON_EXTRACT_SCALAR(payment, '$.shipping_fee') as shipping_fee,
-  JSON_EXTRACT_SCALAR(payment, '$.shipping_fee_platform_discount') as shipping_fee_platform_discount,
-  JSON_EXTRACT_SCALAR(payment, '$.shipping_fee_seller_discount') as shipping_fee_seller_discount,
-  JSON_EXTRACT_SCALAR(payment, '$.sub_total') as sub_total,
-  JSON_EXTRACT_SCALAR(payment, '$.tax') as tax,
-  JSON_EXTRACT_SCALAR(payment, '$.total_amount') as total_amount
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.original_shipping_fee') AS NUMERIC) AS original_shipping_fee,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.original_total_product_price') AS NUMERIC) AS original_total_product_price,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.platform_discount') AS NUMERIC) AS payment_platform_discount,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.seller_discount') AS NUMERIC) AS payment_seller_discount,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.shipping_fee') AS NUMERIC) AS shipping_fee,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.shipping_fee_platform_discount') AS NUMERIC) AS shipping_fee_platform_discount,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.shipping_fee_seller_discount') AS NUMERIC) AS shipping_fee_seller_discount,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.sub_total') AS NUMERIC) AS sub_total,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.tax') AS NUMERIC) AS tax,
+  CAST(JSON_EXTRACT_SCALAR(payment, '$.total_amount') AS NUMERIC) AS total_amount
 FROM
   ${ref("tiktok_orders_union")} a
