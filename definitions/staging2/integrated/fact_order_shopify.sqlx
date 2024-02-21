@@ -7,7 +7,7 @@ select
   channel,
   region,
   location,
-  order_id,
+  cast(order_id as string) as order_id,
   order_name,
   customer_id,
   concat(customer_first_name, " ", customer_last_name) as customer_name,
