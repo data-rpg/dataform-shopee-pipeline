@@ -1,0 +1,39 @@
+config {type: "table"}
+
+select 
+  'shopify' as platform,
+  main_brand,
+  brand,
+  channel,
+  region,
+  location,
+  order_id,
+  order_name,
+  customer_id,
+  concat(customer_first_name, " ", customer_last_name) as customer_name,
+  add_shipping_country as shipping_country,
+  tags,
+  b2b_orders,
+  internal_order,
+  internal_staff_email,
+  cancelled,
+  currency,
+  order_count,
+  created_at,
+  line_item_quantity as item_quantity,
+  exchange_rate_to_usd,
+  trans_net_gross_sales as gross_sales,
+  trans_net_discount as discount,
+  trans_net_returns as return,
+  trans_net_shipping as shipping,
+  null as other,
+  trans_net_tax as tax,
+  trans_net_sales as net_sales,
+  trans_total_sales as total_sales
+from 
+  ${ref("shopify_fact_orders")} 
+
+
+
+
+
