@@ -1,0 +1,58 @@
+config {type: "table"}
+
+select 
+  'shopee' as platform,
+  main_brand,
+  brand,
+  'online' as channel,
+  region,
+  'online' as location,
+  order_sn as order_id,
+  cast(null as string) as order_name,
+  buyer_user_id as customer_id,
+  buyer_user_name as customer_name,
+  cast(null as string) as shipping_country,
+  cast(null as string) as tags,
+  'no' as b2b_orders,
+  'no' as internal_order,
+  'no' as internal_staff_email,
+  case
+    when cancel_by != '' then 'yes'
+    else 'no'
+  end as cancelled,
+  currency,
+  order_count,
+  created_at,
+  items_quantity as item_quantity,
+  exchange_rate_to_usd,
+  (order_income_original_cost_of_goods_sold + order_income_seller_discount) as gross_sales,
+  (order_income_seller_discount + order_income_voucher_from_seller + order_income_seller_coin_cash_back + order_income_original_shopee_discount - order_income_shopee_discount) as discount,
+  order_income_seller_return_refund*-1 as return,
+  (order_income_actual_shipping_fee - order_income_buyer_paid_shipping_fee - order_income_shopee_shipping_rebate + order_income_reverse_shipping_fee - order_income_rsf_seller_protection_fee_claim_amount) as shipping,
+  (order_income_commission_fee + order_income_service_fee + order_income_credit_card_transaction_fee + order_income_order_ams_commission_fee) as other,
+  null as tax,
+  (
+    (order_income_original_cost_of_goods_sold + order_income_seller_discount) 
+    -
+    (order_income_seller_discount + order_income_voucher_from_seller + order_income_seller_coin_cash_back + order_income_original_shopee_discount - order_income_shopee_discount)
+    -
+    order_income_seller_return_refund*-1
+  ) as net_sales,
+  (
+    (order_income_original_cost_of_goods_sold + order_income_seller_discount) 
+    -
+    (order_income_seller_discount + order_income_voucher_from_seller + order_income_seller_coin_cash_back + order_income_original_shopee_discount - order_income_shopee_discount)
+    -
+    order_income_seller_return_refund*-1
+    -
+    (order_income_actual_shipping_fee - order_income_buyer_paid_shipping_fee - order_income_shopee_shipping_rebate + order_income_reverse_shipping_fee - order_income_rsf_seller_protection_fee_claim_amount)
+    -
+    (order_income_commission_fee + order_income_service_fee + order_income_credit_card_transaction_fee + order_income_order_ams_commission_fee)
+  ) as total_sales
+from 
+  ${ref("shopee_orders_transactions")} 
+
+
+
+
+
