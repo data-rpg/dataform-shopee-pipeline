@@ -1,0 +1,42 @@
+config {type: "table"}
+
+select 
+  'lazada' as platform,
+  main_brand,
+  brand,
+  'online' as channel,
+  region,
+  'online' as location,
+  order_id,
+  order_number as order_name,
+  address_shipping_first_name as customer_id,
+  address_shipping_first_name as customer_name,
+  address_shipping_country as shipping_country,
+  cast(null as string) as tags,
+  'no' as b2b_orders,
+  'no' as internal_order,
+  'no' as internal_staff_email,
+  case
+    when statuses like '%canceled%' then 'yes'
+    else 'no'
+  end as cancelled,
+  currency,
+  order_count,
+  created_at_lcl as created_at,
+  items_count as item_quantity,
+  exchange_rate_to_usd,
+  trans_total_orders_sales as gross_sales,
+  trans_total_orders_marketing_fee as discount,
+  trans_total_refunds as return,
+  trans_total_orders_logistics as shipping,
+  (coalesce(trans_total_orders_lazada_fees, 0) + coalesce(orders_claims_other, 0) + coalesce(trans_total_other_services_marketing_fees, 0)) as other,
+  null as tax,
+  (trans_total_orders_sales + trans_total_orders_marketing_fee + trans_total_refunds) as net_sales,
+  (trans_total_orders_sales + trans_total_orders_marketing_fee + trans_total_refunds + trans_total_orders_logistics + (coalesce(trans_total_orders_lazada_fees, 0) + coalesce(orders_claims_other, 0) + coalesce(trans_total_other_services_marketing_fees, 0))) as total_sales
+from 
+  ${ref("lazada_orders_transactions")} 
+
+
+
+
+

@@ -1,11 +1,12 @@
 config {type: "table"}
 
 SELECT
-    *, 
+    * except(items_count), 
     ${mapping.convert_to_local2('created_at')} AS created_at_lcl,
     ${mapping.convert_to_local2('updated_at')} AS updated_at_lcl,
     ROW_NUMBER() OVER(PARTITION BY (address_billing_first_name) ORDER BY created_at) as order_count,
     replace(replace(replace(statuses, "'", ""), "[", ""), "]", "") as status,
+    cast(items_count as numeric) as items_count,
     case
       when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
       when REGEXP_CONTAINS(brand, r"SG") = true then 0.7831

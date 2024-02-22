@@ -2,6 +2,6 @@ config {type: "table"}
 
 SELECT
     'MT' as main_brand, 
-    *
+    * except(order_income_overseas_return_service_fee), order_income_overseas_return_service_fee
 FROM
   ${ref("shopee_transaction_details_mtsg")}
