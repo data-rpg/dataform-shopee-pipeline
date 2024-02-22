@@ -72,10 +72,10 @@ select
   trans_net_line_items_refund,
   adjustment_amount,
 
-  coalesce(c.trans_net_line_items_refund, 0) - coalesce(d.adjustment_amount/brand_count, 0) as trans_net_returns,
+  coalesce(d.adjustment_amount/brand_count, 0) - coalesce(c.trans_net_line_items_refund, 0)  as trans_net_returns,
   coalesce(trans_gross_sales_tax, 0) - coalesce(trans_discount_tax, 0) - coalesce(c.line_items_refund_tax, 0) + coalesce(b.shipping_tax/brand_count, 0) + coalesce(b.shipping_refund_tax/brand_count, 0) as trans_net_tax,
-  coalesce(trans_net_gross_sales, 0) - coalesce(trans_net_discount, 0) + coalesce(b.trans_net_shipping/brand_count, 0) + coalesce(coalesce(c.trans_net_line_items_refund, 0) - coalesce(d.adjustment_amount/brand_count, 0), 0) as trans_net_sales,
-  coalesce(trans_net_gross_sales, 0) - coalesce(trans_net_discount, 0) + coalesce(b.trans_net_shipping/brand_count, 0) + coalesce(coalesce(c.trans_net_line_items_refund, 0) - coalesce(d.adjustment_amount/brand_count, 0), 0) + coalesce(trans_gross_sales_tax, 0) - coalesce(trans_discount_tax, 0) - coalesce(c.line_items_refund_tax, 0) + coalesce(b.shipping_tax/brand_count, 0) + coalesce(b.shipping_refund_tax/brand_count, 0) as trans_total_sales,
+  coalesce(trans_net_gross_sales, 0) - coalesce(trans_net_discount, 0) + coalesce(coalesce(d.adjustment_amount/brand_count, 0) - coalesce(c.trans_net_line_items_refund, 0), 0) as trans_net_sales,
+  coalesce(trans_net_gross_sales, 0) - coalesce(trans_net_discount, 0) + coalesce(b.trans_net_shipping/brand_count, 0) + coalesce(coalesce(d.adjustment_amount/brand_count, 0) - coalesce(c.trans_net_line_items_refund, 0), 0) + coalesce(trans_gross_sales_tax, 0) - coalesce(trans_discount_tax, 0) - coalesce(c.line_items_refund_tax, 0) + coalesce(b.shipping_tax/brand_count, 0) + coalesce(b.shipping_refund_tax/brand_count, 0) as trans_total_sales,
 
   exchange_rate_to_usd,
   trans_net_gross_sales_usd,

@@ -23,7 +23,7 @@ select
   line_item_quantity as item_quantity,
   exchange_rate_to_usd,
   trans_net_gross_sales as gross_sales,
-  trans_net_discount as discount,
+  trans_net_discount*-1 as discount,
   trans_net_returns as return,
   trans_net_shipping as shipping,
   null as other,
