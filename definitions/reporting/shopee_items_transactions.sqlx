@@ -1,10 +1,11 @@
 config {type: "table"}
 
 select  
-  a.* except(actual_shipping_fee, actual_shipping_fee_confirmed,order_chargeable_weight_gram, reverse_shipping_fee, total_amount, order_count),
+  a.*,
   b.* except(main_brand, brand, order_sn, region)
 FROM
   ${ref("shopee_orders_union")} a
-left join 
+right join 
   ${ref("shopee_transactions_items")} b
-on a.order_sn = b.order_sn and a.brand = b.brand
+on a.order_sn = b.order_sn
+
