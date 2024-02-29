@@ -1,6 +1,23 @@
 config {type: "table"}
 
 select  
-  *
+  a.*,
+  b.* except(main_brand, brand, order_id, currency, region),
+  c.item_count
 FROM
-  ${ref("tiktok_transactions_items")} 
+  ${ref("tiktok_transactions_items")} a
+left join 
+  ${ref("tiktok_statements_union")} b
+on a.id = b.order_id and a.brand = b.brand
+LEFT JOIN (
+  SELECT
+    id,
+    brand,
+    COUNT(*) AS item_count
+  FROM
+    ${ref("tiktok_orders_item")}
+  GROUP BY
+    id,
+    brand
+) c
+ON a.id = c.id AND a.brand = c.brand

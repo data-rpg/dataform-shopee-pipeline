@@ -1,0 +1,51 @@
+config {type: "table"}
+
+SELECT
+    main_brand,
+    brand,
+    region,
+    statement_status,
+    settlement_id,
+    order_create_time,
+    order_id,
+    statement_transactions,
+    CAST(actual_return_shipping_fee_amount AS numeric) AS actual_return_shipping_fee_amount,
+    CAST(actual_shipping_fee_amount AS numeric) AS actual_shipping_fee_amount,
+    CAST(adjustment_amount AS numeric) AS adjustment_amount,
+    CAST(affiliate_commission_amount AS numeric) AS affiliate_commission_amount,
+    CAST(affiliate_partner_commission_amount AS numeric) AS affiliate_partner_commission_amount,
+    CAST(after_seller_discounts_subtotal_amount AS numeric) AS after_seller_discounts_subtotal_amount,
+    currency,
+    CAST(customer_order_refund_amount AS numeric) AS customer_order_refund_amount,
+    CAST(customer_payment_amount AS numeric) AS customer_payment_amount,
+    CAST(customer_refund_amount AS numeric) AS customer_refund_amount,
+    CAST(customer_shipping_fee_amount AS numeric) AS customer_shipping_fee_amount,
+    CAST(fee_amount AS numeric) AS fee_amount,
+    CAST(platform_commission_amount AS numeric) AS platform_commission_amount,
+    CAST(platform_discount_amount AS numeric) AS platform_discount_amount,
+    CAST(platform_discount_refund_amount AS numeric) AS platform_discount_refund_amount,
+    CAST(platform_refund_subsidy_amount AS numeric) AS platform_refund_subsidy_amount,
+    CAST(platform_shipping_fee_discount_amount AS numeric) AS platform_shipping_fee_discount_amount,
+    CAST(referral_fee_amount AS numeric) AS referral_fee_amount,
+    CAST(retail_delivery_fee_amount AS numeric) AS retail_delivery_fee_amount,
+    CAST(retail_delivery_fee_payment_amount AS numeric) AS retail_delivery_fee_payment_amount,
+    CAST(retail_delivery_fee_refund_amount AS numeric) AS retail_delivery_fee_refund_amount,
+    CAST(revenue_amount AS numeric) AS revenue_amount,
+    CAST(sales_tax_amount AS numeric) AS sales_tax_amount,
+    CAST(sales_tax_payment_amount AS numeric) AS sales_tax_payment_amount,
+    CAST(sales_tax_refund_amount AS numeric) AS sales_tax_refund_amount,
+    CAST(settlement_amount AS numeric) AS settlement_amount,
+    CAST(shipping_fee_amount AS numeric) AS shipping_fee_amount,
+    CAST(shipping_fee_subsidy_amount AS numeric) AS shipping_fee_subsidy_amount,
+    sku_statement_transactions,
+    statement_id,
+    statement_time,
+    CAST(transaction_fee_amount AS numeric) AS transaction_fee_amount
+FROM
+  (
+    -- select * from ${ref("tiktok_ccmy_statements")}
+    -- union all
+    select * from ${ref("tiktok_mtmy_statements")}
+    -- union all
+    -- select * from ${ref("tiktok_mtsg_statements")}
+  )

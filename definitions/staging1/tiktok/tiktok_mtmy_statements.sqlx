@@ -1,0 +1,11 @@
+config {type: "table"}
+
+SELECT
+    'MT' as main_brand, 
+    'MTMY-Tiktok' as brand,
+    'MY' as region,
+    status as statement_status,
+    id as settlement_id,
+    * except(status, id)
+FROM
+  ${ref("tiktok_statements_list_mtmy")}
