@@ -10,6 +10,7 @@ select
     b as order_income_items_json,
     JSON_EXTRACT_SCALAR(b, '$.activity_id') as activity_id,
     JSON_EXTRACT_SCALAR(b, '$.activity_type') as activity_type,
+    CAST(JSON_EXTRACT_SCALAR(b, '$.ams_commission_fee') AS NUMERIC) as ams_commission_fee,
     CAST(JSON_EXTRACT_SCALAR(b, '$.discount_from_coin') AS NUMERIC) as discount_from_coin,
     CAST(JSON_EXTRACT_SCALAR(b, '$.activitdiscount_from_voucher_sellery_id') AS NUMERIC) as discount_from_voucher_seller,
     CAST(JSON_EXTRACT_SCALAR(b, '$.discount_from_voucher_shopee') AS NUMERIC) as discount_from_voucher_shopee,
@@ -23,8 +24,9 @@ select
     JSON_EXTRACT_SCALAR(b, '$.model_name') as model_name,
     JSON_EXTRACT_SCALAR(b, '$.model_sku') as model_sku,
     CAST(JSON_EXTRACT_SCALAR(b, '$.original_price') AS NUMERIC) as original_price,
-    JSON_EXTRACT_SCALAR(b, '$.quantity_purchased') as quantity_purchased,
+    CAST(JSON_EXTRACT_SCALAR(b, '$.quantity_purchased') AS NUMERIC) as quantity_purchased,
     CAST(JSON_EXTRACT_SCALAR(b, '$.seller_discount') AS NUMERIC) as seller_discount,
+    CAST(JSON_EXTRACT_SCALAR(b, '$.selling_price') AS NUMERIC) as selling_price,
     CAST(JSON_EXTRACT_SCALAR(b, '$.shopee_discount') AS NUMERIC) as shopee_discount
 FROM
   ${ref("shopee_transactions_union")} a,

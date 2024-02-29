@@ -1,0 +1,82 @@
+config {type: "table"}
+(
+select 
+    'product' as sales_line_type,
+    'lazada' as platform,
+    main_brand,
+    brand,
+    'online' as channel,
+    region,
+    'online' as location,
+    order_id,
+    order_number as order_name,
+    address_shipping_first_name as customer_id,
+    address_shipping_first_name as customer_name,
+    address_shipping_country as shipping_country,
+    cast(null as string) as tags,
+    'no' as b2b_orders,
+    'no' as internal_order,
+    'no' as internal_staff_email,
+    'no' as is_gift_card,
+    case
+        when statuses like '%canceled%' then 'yes'
+        else 'no'
+    end as cancelled,
+    currency,
+    order_count,
+    cast(format_datetime("%Y-%m-%d",datetime(created_at_lcl)) as DATE) as created_dt,
+    exchange_rate_to_usd,
+    sku as item_sku,
+    order_item_quantity as item_quantity,
+    trans_total_orders_sales as gross_sales,
+    trans_total_orders_marketing_fee as discount,
+    cast(null as numeric) as return,
+    (trans_total_orders_sales + trans_total_orders_marketing_fee) as net_sales
+from 
+  ${ref("lazada_items_transactions")} 
+)
+
+union all
+
+(
+select 
+    'items return' as sales_line_type,
+    'lazada' as platform,
+    main_brand,
+    brand,
+    'online' as channel,
+    region,
+    'online' as location,
+    order_id,
+    order_number as order_name,
+    address_shipping_first_name as customer_id,
+    address_shipping_first_name as customer_name,
+    address_shipping_country as shipping_country,
+    cast(null as string) as tags,
+    'no' as b2b_orders,
+    'no' as internal_order,
+    'no' as internal_staff_email,
+    'no' as is_gift_card,
+    case
+        when statuses like '%canceled%' then 'yes'
+        else 'no'
+    end as cancelled,
+    currency,
+    order_count,
+    cast(format_datetime("%Y-%m-%d",datetime(coalesce(date_refunds_sales_refund, date_refunds_marketing_fees_refund, date_refunds_claims_refund))) as DATE) as created_dt,
+    exchange_rate_to_usd,
+    sku as item_sku,
+    order_item_quantity as item_quantity,
+    cast(null as numeric) as gross_sales,
+    cast(null as numeric) as discount,
+    (coalesce(refunds_sales_refund, 0) + coalesce(refunds_marketing_fees_refund, 0) + coalesce(refunds_claims_refund, 0)) as return,
+    (coalesce(refunds_sales_refund, 0) + coalesce(refunds_marketing_fees_refund, 0) + coalesce(refunds_claims_refund, 0)) as net_sales
+from 
+    ${ref("lazada_items_transactions")} 
+where
+    (coalesce(refunds_sales_refund, 0) + coalesce(refunds_marketing_fees_refund, 0) + coalesce(refunds_claims_refund, 0)) != 0
+)
+
+
+
+

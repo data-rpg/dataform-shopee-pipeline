@@ -1,0 +1,36 @@
+config {type: "table"}
+
+SELECT 
+    * except(refund_amount, amount_before_discount),
+    refund_amount,
+    amount_before_discount,
+    ${mapping.convert_to_local('create_time')} AS return_created_at,
+    ${mapping.convert_to_local('update_time')} AS return_updated_at,
+    ${mapping.convert_to_local('due_date')} AS return_due_at,
+    ${mapping.convert_to_local('return_ship_due_date')} AS return_ship_due_at,
+    ${mapping.convert_to_local('return_seller_due_date')} AS return_seller_due_at,
+    case
+          when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
+          when REGEXP_CONTAINS(brand, r"SG") = true then 0.7831
+    end as exchange_rate_to_usd
+FROM
+  (
+    select * from ${ref("shopee_blmy_return")}
+    union all
+    select * from ${ref("shopee_blsg_return")}
+    union all
+    select * from ${ref("shopee_ccmy_return")}
+    union all
+    select * from ${ref("shopee_ccsg_return")}
+    union all
+    select * from ${ref("shopee_ebsg_return")}
+    union all
+    select * from ${ref("shopee_mtmy_return")}
+    union all
+    select * from ${ref("shopee_mtsg_return")}
+    union all
+    select * from ${ref("shopee_tmmy_return")}
+    union all
+    select * from ${ref("shopee_tmsg_return")}
+  )
+  

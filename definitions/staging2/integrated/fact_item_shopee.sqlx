@@ -1,0 +1,90 @@
+config {type: "table"}
+(
+select 
+    'product' as sales_line_type,
+    'shopee' as platform,
+    main_brand,
+    brand,
+    'online' as channel,
+    region,
+    'online' as location,
+    order_sn as order_id,
+    cast(null as string) as order_name,
+    buyer_user_id as customer_id,
+    buyer_user_name as customer_name,
+    cast(null as string) as shipping_country,
+    cast(null as string) as tags,
+    'no' as b2b_orders,
+    'no' as internal_order,
+    'no' as internal_staff_email,
+    'no' as is_gift_card,
+    case
+        when cancel_by != '' then 'yes'
+        else 'no'
+    end as cancelled,    
+    currency,
+    order_count,
+    cast(format_datetime("%Y-%m-%d", datetime(created_at)) as DATE) as created_dt,
+    exchange_rate_to_usd,
+    case
+        when model_sku = "" then item_sku
+        else model_sku
+    end as item_sku,
+    quantity_purchased as item_quantity,
+    coalesce(original_price, 0) as gross_sales,
+    (coalesce(seller_discount, 0) + coalesce(discount_from_voucher_seller, 0) + coalesce(discount_from_coin, 0))*-1 as discount,
+    cast(null as numeric) as return,
+    (coalesce(original_price, 0) - (coalesce(seller_discount, 0) + coalesce(discount_from_voucher_seller, 0) + coalesce(discount_from_coin, 0))) as net_sales
+from 
+    ${ref("shopee_items_transactions")} 
+)
+
+union all
+
+(
+select    
+    'items return' as sales_line_type,
+    'shopee' as platform,
+    a.main_brand,
+    a.brand,
+    'online' as channel,
+    a.region,
+    'online' as location,
+    a.order_sn as order_id,
+    cast(null as string) as order_name,
+    b.buyer_user_id as customer_id,
+    b.buyer_user_name as customer_name,
+    cast(null as string) as shipping_country,
+    cast(null as string) as tags,
+    'no' as b2b_orders,
+    'no' as internal_order,
+    'no' as internal_staff_email,
+    'no' as is_gift_card,
+    case
+        when b.cancel_by != '' then 'yes'
+        else 'no'
+    end as cancelled,    
+    a.currency,
+    b.order_count,
+    cast((format_datetime("%Y-%m-%d", datetime(a.return_created_at))) as DATE) as created_dt,
+    a.exchange_rate_to_usd,
+    case
+        when a.variation_sku = "" then a.item_sku
+        else a.variation_sku
+    end as item_sku,
+    amount as item_quantity,
+    cast(null as numeric) as gross_sales,
+    cast(null as numeric) as discount,
+    item_price*-1 as return,
+    item_price*-1 as net_sales
+from 
+    ${ref("shopee_returns_items")} a
+left join
+    ${ref("shopee_orders_transactions")} b
+on a.order_sn = b.order_sn
+)
+
+
+
+
+

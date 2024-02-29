@@ -1,0 +1,11 @@
+config {type: "table"}
+
+SELECT
+  'TM' as main_brand, 
+  'TMMY-Shopee' as brand,
+  'MY' as region,
+  * except(buyer_videos, __index_level_0__),
+  cast(null as ARRAY<STRING>) as dispute_reason,
+  cast(null as ARRAY<STRING>) as dispute_text_reason
+FROM
+  ${ref("shopee_return_tmmy")}

@@ -1,0 +1,48 @@
+config {type: "table"}
+
+select 
+    trans_sales_line_type as sales_line_type,
+    'shopify' as platform,
+    main_brand,
+    brand,
+    channel,
+    region,
+    location,
+    cast(order_id as string) as order_id,
+    order_name,
+    customer_id,
+    concat(customer_first_name, " ", customer_last_name) as customer_name,
+    add_shipping_country as shipping_country,
+    tags,
+    b2b_orders,
+    internal_order,
+    internal_staff_email,
+    case
+        when line_items_gift_card = 'false' then 'no'
+        else 'yes'
+    end as is_gift_card,
+    cancelled,
+    currency,
+    order_count,
+    case
+        when trans_sales_line_type ='product' then date(created_dt)
+        when trans_sales_line_type = 'items_return' then items_return_created_dt
+    end as created_dt,
+    exchange_rate_to_usd,
+    line_items_main_sku as item_sku,
+    line_item_quantity as item_quantity,
+    trans_net_gross_sales as gross_sales,
+    trans_net_discount*-1 as discount,
+    trans_net_returns as return,
+    trans_net_sales as net_sales,
+from 
+    ${ref("shopify_fact_granular")} 
+where 
+    trans_sales_line_type  in ('product', 'items return')
+
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+config {type: "table"}
+
+select  
+    a.* except(item, image),
+    b.* except(images)
+FROM
+  ${ref("shopee_returns_union")} a, unnest(item) b
