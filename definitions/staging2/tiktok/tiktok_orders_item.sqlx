@@ -28,8 +28,8 @@ select
   JSON_EXTRACT_SCALAR(b, '$.sku_image') as sku_image,
   JSON_EXTRACT_SCALAR(b, '$.sku_name') as sku_name,
   JSON_EXTRACT_SCALAR(b, '$.sku_type') as sku_type,
-  JSON_EXTRACT_SCALAR(b, '$.tracking_number') as tracking_numbers
-
+  JSON_EXTRACT_SCALAR(b, '$.tracking_number') as tracking_numbers,
+  COUNT(*) OVER (PARTITION BY a.id) AS item_count
 FROM
   ${ref("tiktok_orders_union")} a,
   unnest(json_extract_array(${mapping.string_array_to_json('line_items')})) b

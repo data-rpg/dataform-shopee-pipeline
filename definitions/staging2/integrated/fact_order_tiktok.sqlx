@@ -1,0 +1,37 @@
+config {type: "table"}
+
+select 
+  'tiktok' as platform,
+  main_brand,
+  brand,
+  'online' as channel,
+  region,
+  'online' as location,
+  id as order_id,
+  cast(null as string) as order_name,
+  user_id as customer_id,
+  customer_full_name as customer_name,
+  cast(null as string) as shipping_country,
+  cast(null as string) as tags,
+  'no' as b2b_orders,
+  'no' as internal_order,
+  'no' as internal_staff_email,
+  case
+    when status = 'CANCELLED' then 'yes'
+    else 'no'
+  end as cancelled,
+  currency,
+  order_count,
+  created_at,
+  item_count as item_quantity,
+  exchange_rate_to_usd,
+  original_total_product_price as gross_sales,
+  (payment_seller_discount)*-1 as discount,
+  (customer_refund_amount + platform_refund_subsidy_amount + platform_discount_refund_amount) as return,
+  (customer_shipping_fee_amount + shipping_fee_amount + shipping_fee_subsidy_amount) as shipping,
+  (fee_amount-(customer_shipping_fee_amount + shipping_fee_amount + shipping_fee_subsidy_amount)) as other,
+  null as tax,
+  revenue_amount as net_sales,
+  settlement_amount as total_sales
+from 
+  ${ref("tiktok_orders_transaction")} 
