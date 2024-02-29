@@ -1,0 +1,9 @@
+config {type: "table"}
+
+SELECT
+    'MT' as main_brand, 
+    'MTMY-Shopee' as brand,
+    'MY' as region,
+    * except(buyer_videos, __index_level_0__)
+FROM
+  ${ref("shopee_return_mtmy")}

@@ -18,7 +18,6 @@ FROM
     select * from ${ref("lazada_blsg_order")}
     union all
     select * from ${ref("lazada_ccmy_order")}
-
     union all
     select * from ${ref("lazada_ccsg_order")}
     union all

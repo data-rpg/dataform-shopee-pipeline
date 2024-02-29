@@ -1,11 +1,15 @@
 config {type: "table"}
 
 select 
-    a.*,
+    c.* except(voucher_seller, voucher_code, status, voucher_platform, warehouse_code, created_at, shipping_fee_discount_platform, updated_at, currency, shipping_fee_original, shipping_fee_discount_seller, extra_attributes, exchange_rate_to_usd),
+    a.* except(main_brand, brand, region, order_number, order_id),
     b.* except (main_brand, brand, region, currency, order_no, orderItem_no, seller_sku) 
 from 
     ${ref("lazada_items_union")} a
 left join
     ${ref("lazada_transactions_pivot_trans")} b
 on a.order_id = b.order_no and a.order_item_id = b.orderItem_no
+left join   
+    ${ref("lazada_orders_union")} c
+on a.order_id = c.order_id
 
