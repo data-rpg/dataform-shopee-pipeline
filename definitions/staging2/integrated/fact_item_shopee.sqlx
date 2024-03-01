@@ -82,6 +82,8 @@ from
 left join
     ${ref("shopee_orders_transactions")} b
 on a.order_sn = b.order_sn
+where 
+    status = 'REFUND_PAID'
 )
 
 

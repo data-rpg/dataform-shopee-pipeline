@@ -1,0 +1,25 @@
+config {type: "table"}
+
+select 
+    a.* except(item_quantity, item_sku, gross_sales, discount, return, net_sales),
+    a.item_sku as bundle_sku,
+    b.item_sku,
+    a.item_quantity,
+    b.collection,
+    b.product_line,
+    b.packs,
+    b.colour,
+    b.size,
+    b.product_group,
+    b.item_sku_cogs,
+    b.bundle_sku_cogs,
+    b.count_in_bundle,
+    a.gross_sales/coalesce(b.count_in_bundle, 1) as gross_sales,
+    a.discount/coalesce(b.count_in_bundle, 1) as discount,
+    a.return/coalesce(b.count_in_bundle, 1) as return,
+    a.net_sales/coalesce(b.count_in_bundle, 1) as net_sales
+from 
+    ${ref("fact_item")} a
+left join
+    ${ref("sku_master_clean")} b
+on trim(upper(a.item_sku)) = trim(upper(b.bundle_sku))
