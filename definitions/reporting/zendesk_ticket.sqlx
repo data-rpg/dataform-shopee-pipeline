@@ -1,4 +1,8 @@
-config {type: "table"}
+config {
+  type: "table",
+  schema: "reporting"
+}
+
 WITH agent_audits_with_ranks AS (
   SELECT
     ticket_id,

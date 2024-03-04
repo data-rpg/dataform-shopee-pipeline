@@ -1,4 +1,7 @@
-config {type: "table"}
+config {
+  type: "table",
+  schema: "reporting"
+}
 
 select 
     a.* except(item_quantity, item_sku, gross_sales, discount, return, net_sales),
