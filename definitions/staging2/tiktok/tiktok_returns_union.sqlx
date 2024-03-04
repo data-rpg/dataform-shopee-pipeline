@@ -1,0 +1,14 @@
+-- config {type: "table"}
+
+-- SELECT 
+--     create_time,
+--     discount_amount,
+-- FROM
+--   (
+--     select * from ${ref("tiktok_ccmy_return")}
+--     union all
+--     select * from ${ref("tiktok_mtmy_return")}
+--     -- union all
+--     -- select * from ${ref("tikok_mtsg_returns")}
+--   )
+  

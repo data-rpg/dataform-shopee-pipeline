@@ -1,0 +1,9 @@
+-- config {type: "table"}
+
+-- SELECT
+--   'MT' as main_brand, 
+--   'MTSG-Tiktok' as brand,
+--   'SG' as region,
+--   *
+-- FROM
+--   ${ref("tiktok_returns_list_mtsg")}

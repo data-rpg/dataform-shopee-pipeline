@@ -9,6 +9,10 @@ SELECT
     order_create_time,
     order_id,
     statement_transactions,
+    case
+          when REGEXP_CONTAINS(brand, r"MY") = true then 0.2238
+          when REGEXP_CONTAINS(brand, r"SG") = true then 0.7831
+    end as exchange_rate_to_usd,
     CAST(actual_return_shipping_fee_amount AS numeric) AS actual_return_shipping_fee_amount,
     CAST(actual_shipping_fee_amount AS numeric) AS actual_shipping_fee_amount,
     CAST(adjustment_amount AS numeric) AS adjustment_amount,

@@ -2,7 +2,7 @@ config {type: "table"}
 
 select  
   a.*,
-  b.* except(main_brand, brand, order_id, currency, region),
+  b.* except(main_brand, brand, order_id, currency, region, exchange_rate_to_usd),
   c.item_count
 FROM
   ${ref("tiktok_transactions_items")} a
