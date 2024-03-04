@@ -11,14 +11,14 @@ with
       a.adjusted_order_created_at as order_created_at,
       a.adjusted_cancelled_dt as cancelled_dt,
       a.adjusted_closed_dt as closed_dt,
-      cast(b.variant_compare_at_price as numeric) as variant_compare_at_price,
+      -- cast(b.variant_compare_at_price as numeric) as variant_compare_at_price,
       a.refund_item_line_item_amount as refund_items_amount,
       a.refund_item_line_item_tax as refund_items_tax
     from
       ${ref("shopify_orders_return_items")} a
-    left join -- Assign compare_at_price
-      `rpg-dw-ingestion.refund_test.products_variants` b
-    on a.refund_item_line_item_variant_id = b.variant_id
+    -- left join -- Assign compare_at_price
+    --   `rpg-dw-ingestion.refund_test.products_variants` b
+    -- on a.refund_item_line_item_variant_id = b.variant_id
   )
 
 select
@@ -83,7 +83,7 @@ select
 
   null as line_item_price,
   refund_item_line_item_quantity * -1 as line_item_quantity,
-  variant_compare_at_price,
+  null as variant_compare_at_price,
   null as trans_gross_sales_tax_inclusive,
   null as item_tax_rate,
   null as item_tax,

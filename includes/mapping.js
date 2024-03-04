@@ -7,7 +7,7 @@ function convert_to_local2(created_at){ //convert from "%Y-%m-%d %X %z"
 }
 
 function convert_to_local3(utc_at, local_at, fmt){
-    return `format_timestamp("${fmt}", timestamp(${utc_at}), right(${local_at}, 6))`;
+    return `datetime(format_timestamp("${fmt}", timestamp(${utc_at}), right(${local_at}, 6)))`;
 }
 
 function string_array_to_json(stringified_array){ /* [{'A': 1, 'B': "Funfetti Knight's Tumbler", 'C': True}, {'A': 2, 'B': "Disney Ace Bottle Medium", 'C': False}] 

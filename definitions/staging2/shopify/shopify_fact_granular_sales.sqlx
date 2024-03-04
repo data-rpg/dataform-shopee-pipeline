@@ -15,7 +15,7 @@ with
             a.adjusted_closed_dt as closed_dt,
             a.line_items_price as line_item_price,
             a.line_items_quantity as line_item_quantity,
-            cast(v.variant_compare_at_price as numeric) as variant_compare_at_price,
+            -- cast(v.variant_compare_at_price as numeric) as variant_compare_at_price,
             (a.line_items_price * a.line_items_quantity) as gross_sales,
             b.discount_code,
             b.discount_amount as total_discount,
@@ -55,9 +55,9 @@ with
             ) c
         on a.order_id = b.order_id and cast(a.line_items_id as string) = c.tax_line_items_id
 
-        left join -- Assign compare_at_price
-            `rpg-dw-ingestion.refund_test.products_variants` v
-        on a.line_items_variant_id = v.variant_id
+        -- left join -- Assign compare_at_price
+        --     `rpg-dw-ingestion.refund_test.products_variants` v
+        -- on a.line_items_variant_id = v.variant_id
     )
 
 select
@@ -122,7 +122,7 @@ select
 
     line_item_price,
     line_item_quantity,
-    variant_compare_at_price,
+    null as variant_compare_at_price,
     gross_sales as trans_gross_sales_tax_inclusive,
     order_tax_rate as item_tax_rate,
     after_discount_items_tax as item_tax,
