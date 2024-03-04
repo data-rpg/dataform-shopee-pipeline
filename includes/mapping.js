@@ -1,9 +1,9 @@
 function convert_to_local(number){ //convert from numeric
-    return `format_timestamp("%FT%X", timestamp_add(timestamp_seconds(cast(safe_cast(${number} as numeric) as int64)), INTERVAL 8 hour))`;
+    return `datetime(format_timestamp("%FT%X", timestamp_add(timestamp_seconds(cast(safe_cast(${number} as numeric) as int64)), INTERVAL 8 hour)))`;
 }
 
 function convert_to_local2(created_at){ //convert from "%Y-%m-%d %X %z"
-    return `format_timestamp("%FT%X", timestamp_add(timestamp_seconds(cast(format_timestamp("%s",PARSE_TIMESTAMP("%Y-%m-%d %X %z" ,${created_at})) as int64)), INTERVAL 8 hour))`;
+    return `datetime(format_timestamp("%FT%X", timestamp_add(timestamp_seconds(cast(format_timestamp("%s",PARSE_TIMESTAMP("%Y-%m-%d %X %z" ,${created_at})) as int64)), INTERVAL 8 hour)))`;
 }
 
 function convert_to_local3(utc_at, local_at, fmt){
