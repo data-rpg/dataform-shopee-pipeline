@@ -1,0 +1,9 @@
+config {type: "table"}
+
+SELECT
+  'CC' as main_brand, 
+  'CCMY-Tiktok' as brand,
+  'MY' as region,
+  *
+FROM
+  ${ref("tiktok_returns_list_ccmy")}

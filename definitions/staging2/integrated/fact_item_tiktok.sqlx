@@ -1,0 +1,78 @@
+config {type: "table"}
+(
+select 
+    'product' as sales_line_type,
+    'tiktok' as platform,
+    a.main_brand,
+    a.brand,
+    'online' as channel,
+    a.region,
+    'online' as location,
+    id as order_id,
+    cast(null as string) as order_name,
+    user_id as customer_id,
+    customer_full_name as customer_name,
+    cast(null as string) as shipping_country,
+    cast(null as string) as tags,
+    'no' as b2b_orders,
+    'no' as internal_order,
+    'no' as internal_staff_email,
+    'no' as is_gift_card,
+    case
+      when status = 'CANCELLED' then 'yes'
+      else 'no'
+    end as cancelled,   
+    a.currency,
+    order_count,
+    cast(format_datetime("%Y-%m-%d", datetime(created_at)) as DATE) as created_dt,
+    a.exchange_rate_to_usd,
+    seller_sku as item_sku,
+    sku_quantity as item_quantity,
+    coalesce(original_price, 0) as gross_sales,
+    (coalesce(seller_discount, 0))*-1 as discount,
+    cast(null as numeric) as return,
+    (coalesce(original_price, 0) - (coalesce(seller_discount, 0))) as net_sales
+from 
+    ${ref("tiktok_order_statements_item")} a
+)
+
+union all
+
+(
+select    
+    'items return' as sales_line_type,
+    'tiktok' as platform,
+    a.main_brand,
+    a.brand,
+    'online' as channel,
+    a.region,
+    'online' as location,
+    a.id as order_id,
+    cast(null as string) as order_name,
+    user_id as customer_id,
+    customer_full_name as customer_name,
+    cast(null as string) as shipping_country,
+    cast(null as string) as tags,
+    'no' as b2b_orders,
+    'no' as internal_order,
+    'no' as internal_staff_email,
+    'no' as is_gift_card,
+    case
+      when status = 'CANCELLED' then 'yes'
+      else 'no'
+    end as cancelled,    
+    a.currency,
+    order_count,
+    cast((format_datetime("%Y-%m-%d", datetime(DATE(${mapping.convert_to_local('a.statement_time')})))) as DATE) as created_dt,
+    a.exchange_rate_to_usd,
+    seller_sku as item_sku,
+    sku_quantity as item_quantity,
+    cast(null as numeric) as gross_sales,
+    cast(null as numeric) as discount,
+    sku_customer_order_refund_amount as return,
+    sku_customer_order_refund_amount as net_sales
+from 
+    ${ref("tiktok_order_statements_item")} a
+where 
+    sku_customer_order_refund_amount != 0
+) 

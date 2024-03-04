@@ -1,0 +1,24 @@
+config {type: "table"}
+
+SELECT  
+  a.*,
+  b.* EXCEPT(main_brand, brand, order_id, currency, region, exchange_rate_to_usd),
+  d.seller_sku,
+  d.original_price,
+  d.seller_discount
+FROM
+  ${ref("tiktok_statements_item")} b
+LEFT JOIN 
+  ${ref("tiktok_transactions_items")} a
+ON a.id = b.order_id AND a.brand = b.brand
+LEFT JOIN (
+  SELECT DISTINCT
+    id,
+    sku_id,
+    seller_sku,
+    original_price,
+    seller_discount
+  FROM
+    ${ref("tiktok_items_transaction")}
+) d
+ON b.sku_id = d.sku_id and a.id = d.id
