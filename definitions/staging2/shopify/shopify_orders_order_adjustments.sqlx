@@ -14,7 +14,7 @@ SELECT
   processed_dt as order_processed_dt,
 
   datetime(timestamp(JSON_VALUE(refund, '$.created_at'))) as created_at,
-  format_datetime("%F", datetime(timestamp(JSON_VALUE(refund, '$.created_at')))) as created_dt,
+  date(format_datetime("%F", datetime(timestamp(JSON_VALUE(refund, '$.created_at'))))) as created_dt,
   datetime(left(JSON_VALUE(refund, '$.created_at'), 19)) as adjusted_created_at,
   date(left(JSON_VALUE(refund, '$.created_at'), 10)) as adjusted_created_dt, 
 

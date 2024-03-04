@@ -114,17 +114,17 @@ select
   right(processed_at, 6) as utc_adjustment_string,
 
   datetime(created_at) as created_at,
-  format_datetime("%F", datetime(created_at)) as created_dt,
+  date(format_datetime("%F", datetime(created_at))) as created_dt,
   ${mapping.convert_to_local3("created_at", "processed_at", "%FT%X")} as adjusted_created_at,
   ${mapping.convert_to_local3("created_at", "processed_at", "%F")} as adjusted_created_dt,
 
   datetime(cancelled_at) as cancelled_at,
-  format_datetime("%F", datetime(cancelled_at)) as cancelled_dt,
+  date(format_datetime("%F", datetime(cancelled_at))) as cancelled_dt,
   ${mapping.convert_to_local3("cancelled_at", "processed_at", "%FT%X")} as adjusted_cancelled_at,
   ${mapping.convert_to_local3("cancelled_at", "processed_at", "%F")} as adjusted_cancelled_dt,
 
   datetime(closed_at) as closed_at,
-  format_datetime("%F", datetime(closed_at)) as closed_dt,
+  date(format_datetime("%F", datetime(closed_at))) as closed_dt,
   ${mapping.convert_to_local3("closed_at", "processed_at", "%FT%X")} as adjusted_closed_at,
   ${mapping.convert_to_local3("closed_at", "processed_at", "%F")} as adjusted_closed_dt,
 
