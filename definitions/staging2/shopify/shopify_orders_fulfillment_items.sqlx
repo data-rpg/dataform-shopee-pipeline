@@ -1,0 +1,26 @@
+config {type: "table"}
+
+select
+    * except(fulfillment_line_items),
+    JSON_VALUE(fulfillment_line_item, '$.id') as fulfillment_line_item_id,
+    JSON_VALUE(fulfillment_line_item, '$.fulfillable_quantity') as fulfillment_line_item_fulfillable_quantity,
+    JSON_VALUE(fulfillment_line_item, '$.fulfillment_service') as fulfillment_line_item_fulfillment_service,
+    JSON_VALUE(fulfillment_line_item, '$.fulfillment_status') as fulfillment_line_item_fulfillment_status,
+    JSON_VALUE(fulfillment_line_item, '$.gift_card') as fulfillment_line_item_gift_card,
+    JSON_VALUE(fulfillment_line_item, '$.grams') as fulfillment_line_item_grams,
+    JSON_VALUE(fulfillment_line_item, '$.name') as fulfillment_line_item_name,
+    JSON_VALUE(fulfillment_line_item, '$.price') as fulfillment_line_item_price,
+    JSON_VALUE(fulfillment_line_item, '$.product_exists') as fulfillment_line_item_product_exists,
+    JSON_VALUE(fulfillment_line_item, '$.product_id') as fulfillment_line_item_product_id,
+    JSON_VALUE(fulfillment_line_item, '$.quantity') as fulfillment_line_item_quantity,
+    JSON_VALUE(fulfillment_line_item, '$.requires_shipping') as fulfillment_line_item_requires_shipping,
+    JSON_VALUE(fulfillment_line_item, '$.sku') as fulfillment_line_item_sku,
+    JSON_VALUE(fulfillment_line_item, '$.taxable') as fulfillment_line_item_taxable,
+    JSON_VALUE(fulfillment_line_item, '$.title') as fulfillment_line_item_title,
+    JSON_VALUE(fulfillment_line_item, '$.total_discount') as fulfillment_line_item_total_discount,
+    JSON_VALUE(fulfillment_line_item, '$.variant_id') as fulfillment_line_item_variant_id,
+    JSON_VALUE(fulfillment_line_item, '$.variant_inventory_management') as fulfillment_line_item_variant_inventory_management,
+    JSON_VALUE(fulfillment_line_item, '$.variant_title') as fulfillment_line_item_variant_title,
+    JSON_VALUE(fulfillment_line_item, '$.vendor') as fulfillment_line_item_vendor   
+from 
+    ${ref("shopify_orders_fulfillment")}, unnest(fulfillment_line_items) as fulfillment_line_item

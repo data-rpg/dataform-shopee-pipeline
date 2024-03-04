@@ -1,4 +1,7 @@
-config {type: "table"}
+config {
+  type: "table",
+  schema: "reporting"
+}
 
 select 
     c.* except(voucher_seller, voucher_code, status, voucher_platform, warehouse_code, created_at, shipping_fee_discount_platform, updated_at, currency, shipping_fee_original, shipping_fee_discount_seller, extra_attributes, exchange_rate_to_usd),

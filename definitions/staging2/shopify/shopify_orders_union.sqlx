@@ -1,4 +1,6 @@
-config {type: "table"}
+config {
+  type: "table"
+}
 
 select
     id as order_id,

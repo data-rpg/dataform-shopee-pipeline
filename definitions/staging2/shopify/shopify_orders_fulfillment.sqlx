@@ -7,6 +7,7 @@ select
     JSON_VALUE(fulfillment, '$.tracking_company') as fulfillments_tracking_company,
     JSON_VALUE(fulfillment, '$.tracking_number') as fulfillments_tracking_number,
     JSON_VALUE(fulfillment, '$.tracking_url') as fulfillments_tracking_url,
+    JSON_EXTRACT_ARRAY(fulfillment, '$.line_items') as fulfillment_line_items,
     
     datetime(left(JSON_VALUE(fulfillment, '$.created_at'), 19)) as fulfillments_created_at,
     date(left(JSON_VALUE(fulfillment, '$.created_at'), 10)) as fulfillments_created_dt,
