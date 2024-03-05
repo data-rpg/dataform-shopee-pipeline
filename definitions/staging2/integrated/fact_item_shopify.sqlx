@@ -1,4 +1,7 @@
-config {type: "table"}
+config {
+  type: "table",
+  schema: "staging2"
+}
 
 select 
     trans_sales_line_type as sales_line_type,
