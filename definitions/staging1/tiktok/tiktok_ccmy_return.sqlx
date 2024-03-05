@@ -1,4 +1,7 @@
-config {type: "table"}
+config {
+  type: "view",
+  schema: "staging1"
+}
 
 SELECT
   'CC' as main_brand, 

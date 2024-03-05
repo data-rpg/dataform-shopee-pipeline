@@ -1,4 +1,8 @@
-config {type: "table"}
+config {
+  type: "table",
+  schema: "staging2"
+}
+
 (
 select 
     'product' as sales_line_type,

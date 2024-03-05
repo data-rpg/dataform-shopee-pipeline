@@ -1,4 +1,7 @@
-config {type: "table"}
+config {
+  type: "table",
+  schema: "staging2"
+}
 
 SELECT 
   * except(processed_at, processed_dt, created_at, created_dt, adjusted_created_at, adjusted_created_dt),
