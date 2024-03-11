@@ -90,6 +90,13 @@ FROM
     select * from ${ref("lazada_tmmy_item")}
     union all
     select * from ${ref("lazada_tmsg_item")}
-  ), 
-  UNNEST(JSON_EXTRACT_ARRAY(order_items)) items 
+  ),
+  UNNEST(JSON_EXTRACT_ARRAY(replace(replace(order_items, 'False', 'false'), 'True', 'true'))) items 
+
+
+
+
+
+
+
   
