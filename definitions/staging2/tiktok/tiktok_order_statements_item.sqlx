@@ -4,8 +4,8 @@ config {
 }
 
 SELECT  
-  a.*,
-  b.* EXCEPT(main_brand, brand, order_id, currency, region, exchange_rate_to_usd),
+  a.* EXCEPT(main_brand, brand, currency, region, exchange_rate_to_usd),
+  b.*,
   d.seller_sku,
   d.original_price,
   d.seller_discount
@@ -24,4 +24,4 @@ LEFT JOIN (
   FROM
     ${ref("tiktok_items_transaction")}
 ) d
-ON b.sku_id = d.sku_id and a.id = d.id
+ON b.sku_id = d.sku_id and b.order_id = d.id
