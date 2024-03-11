@@ -12,7 +12,7 @@ select
     'online' as channel,
     a.region,
     'online' as location,
-    id as order_id,
+    order_id,
     cast(null as string) as order_name,
     user_id as customer_id,
     customer_full_name as customer_name,
