@@ -1,0 +1,14 @@
+config {
+  type: "view",
+  schema: "staging1"
+}
+
+SELECT
+    'CC' as main_brand, 
+    'CCMY-Tiktok' as brand,
+    'MY' as region,
+    status as statement_status,
+    id as settlement_id,
+    * except(status, id)
+FROM
+  ${ref("tiktok_statements_list_ccmy")}

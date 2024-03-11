@@ -49,8 +49,8 @@ SELECT
     CAST(transaction_fee_amount AS numeric) AS transaction_fee_amount
 FROM
   (
-    -- select * from ${ref("tiktok_ccmy_statements")}
-    -- union all
+    select * from ${ref("tiktok_ccmy_statements")}
+    union all
     select * from ${ref("tiktok_mtmy_statements")}
     -- union all
     -- select * from ${ref("tiktok_mtsg_statements")}
