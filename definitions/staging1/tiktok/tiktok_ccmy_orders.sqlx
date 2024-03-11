@@ -8,7 +8,8 @@ SELECT
     'CCMY-Tiktok' as brand,
     'MY' as region,
     'MYR' as currency,
-    *, 
-    'nan' as seller_note
+    * except(is_replacement_order), 
+    'nan' as seller_note,
+    is_replacement_order
 FROM
   ${ref("tiktok_orders_list_ccmy")}

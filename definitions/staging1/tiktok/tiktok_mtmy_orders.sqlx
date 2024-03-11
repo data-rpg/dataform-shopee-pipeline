@@ -9,6 +9,7 @@ SELECT
     'MY' as region,
     'MYR' as currency,
     * except(seller_note),
-    seller_note
+    seller_note,
+    false as is_replacement_order
 FROM
   ${ref("tiktok_orders_list_mtmy")}
