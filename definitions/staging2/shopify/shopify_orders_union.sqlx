@@ -119,17 +119,17 @@ select
   datetime(created_at) as created_at,
   date(format_datetime("%F", datetime(created_at))) as created_dt,
   ${mapping.convert_to_local3("created_at", "processed_at", "%FT%X")} as adjusted_created_at,
-  ${mapping.convert_to_local3("created_at", "processed_at", "%F")} as adjusted_created_dt,
+  date(${mapping.convert_to_local3("created_at", "processed_at", "%F")}) as adjusted_created_dt,
 
   datetime(cancelled_at) as cancelled_at,
   date(format_datetime("%F", datetime(cancelled_at))) as cancelled_dt,
   ${mapping.convert_to_local3("cancelled_at", "processed_at", "%FT%X")} as adjusted_cancelled_at,
-  ${mapping.convert_to_local3("cancelled_at", "processed_at", "%F")} as adjusted_cancelled_dt,
+  date(${mapping.convert_to_local3("cancelled_at", "processed_at", "%F")}) as adjusted_cancelled_dt,
 
   datetime(closed_at) as closed_at,
   date(format_datetime("%F", datetime(closed_at))) as closed_dt,
   ${mapping.convert_to_local3("closed_at", "processed_at", "%FT%X")} as adjusted_closed_at,
-  ${mapping.convert_to_local3("closed_at", "processed_at", "%F")} as adjusted_closed_dt,
+  date(${mapping.convert_to_local3("closed_at", "processed_at", "%F")}) as adjusted_closed_dt,
 
   datetime(left(processed_at, 19)) as processed_at,
   date(left(processed_at, 10)) as processed_dt,
