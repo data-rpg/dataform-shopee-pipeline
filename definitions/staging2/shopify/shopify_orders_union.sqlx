@@ -177,6 +177,8 @@ FROM
     union all
     select * from ${ref("shopify_luckymax_order")}
     union all
+    select * from ${ref("shopify_mtau_order")}
+    union all
     select * from ${ref("shopify_mtmy_order")}
     union all
     select * from ${ref("shopify_mtsg_order")}
