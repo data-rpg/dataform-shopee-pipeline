@@ -12,5 +12,6 @@ SELECT
     seller_note,
     is_replacement_order,
     delivery_sla_time
+    
 FROM
   ${ref("tiktok_orders_list_mtmy")}
