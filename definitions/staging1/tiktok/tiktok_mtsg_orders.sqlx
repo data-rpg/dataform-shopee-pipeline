@@ -45,6 +45,7 @@ SELECT
     collection_due_time, 
     shipping_due_time, 
     'nan' as seller_note,
-    false as is_replacement_order
+    false as is_replacement_order,
+    null as delivery_sla_time
 FROM
   ${ref("tiktok_orders_list_mtsg")}
