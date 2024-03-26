@@ -10,6 +10,7 @@ SELECT
     'MYR' as currency,
     * except(seller_note, is_replacement_order, delivery_sla_time),
     seller_note,
-    is_replacement_order
+    is_replacement_order,
+    delivery_sla_time
 FROM
   ${ref("tiktok_orders_list_mtmy")}
