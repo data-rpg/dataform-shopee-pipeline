@@ -8,8 +8,9 @@ SELECT
     'MTMY-Tiktok' as brand,
     'MY' as region,
     'MYR' as currency,
-    * except(seller_note),
+    * except(seller_note, is_replacement_order, delivery_sla_time),
     seller_note,
-    false as is_replacement_order
+    is_replacement_order,
+    delivery_sla_time
 FROM
   ${ref("tiktok_orders_list_mtmy")}
